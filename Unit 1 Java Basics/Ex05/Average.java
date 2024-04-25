@@ -1,5 +1,3 @@
-package Ex05;
-
 import java.util.*;
 
 /*
