@@ -25,6 +25,7 @@ public class CheckLine{
                 validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("That is not a valid input, please retry.");
+                sc.nextLine();
             }
         } while (!validInput);
         validInput = false;
@@ -36,8 +37,10 @@ public class CheckLine{
                 validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("That is not a valid input, please retry.");
+                sc.nextLine();
             }
         } while (!validInput);
+        validInput = false;
 
         // recieves a user input for a the second coordinate 
         do{
@@ -53,6 +56,7 @@ public class CheckLine{
                 validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("That is not a valid input, please retry.");
+                sc.nextLine();
             }
         } while (!validInput);
         validInput = false;
@@ -64,14 +68,15 @@ public class CheckLine{
                 validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("That is not a valid input, please retry.");
+                sc.nextLine();
             }
         } while (!validInput);
 
         // calls the Line class' length and slope methods and prints the result
         length += Line.length(x1, y1, x2, y2);
         slope += Line.slope(x1, y1, x2, y2);
-        System.out.printf("The length of the line is %s units.", length);
-        System.out.printf("The slope of the line is %s.", slope);
+        System.out.printf("The length of the line is %s units.%n", length);
+        System.out.printf("The slope of the line is %s.%n", slope);
         sc.close();
     }
 }
