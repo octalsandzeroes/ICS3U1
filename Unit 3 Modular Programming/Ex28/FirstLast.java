@@ -20,5 +20,6 @@ public class FirstLast{
         input = sc.nextLine();
         strLength = input.length();
         System.out.printf("First character: %c%nLast character: %c%n", input.charAt(0), input.charAt(strLength-1));
+        sc.close();
     }
 }

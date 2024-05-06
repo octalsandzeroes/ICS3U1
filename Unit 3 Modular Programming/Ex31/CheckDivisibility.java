@@ -24,6 +24,7 @@ public class CheckDivisibility{
         } else {
             System.out.printf("%d is not perfectly divisible by %d", num, den);
         }
+        sc.close();
     }
 
     /*====================================================================

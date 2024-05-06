@@ -18,6 +18,7 @@ public class SoundAlarm{
         System.out.print("Enter the number of alarms: ");
         numAlarms = Integer.parseInt(sc.nextLine());
         SoundAlarm.alarm(numAlarms);
+        sc.close();
     }
 
     /*====================================================================

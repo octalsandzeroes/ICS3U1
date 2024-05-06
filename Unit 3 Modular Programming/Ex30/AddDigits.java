@@ -34,5 +34,6 @@ public class AddDigits{
         }
         sumStr += ")";
         System.out.printf("%13s%s%n", "", sumStr);
+        sc.close();
     }
 }

@@ -20,5 +20,6 @@ public class StringLen{
         input = sc.nextLine();
         strLength = input.length();
         System.out.printf("Your string is %d characters long.%n", strLength);
+        sc.close();
     }
 }

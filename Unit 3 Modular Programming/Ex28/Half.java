@@ -21,5 +21,6 @@ public class Half{
         strLength = input.length();
         System.out.println(input.substring(0, strLength/2));
         System.out.println(input.substring(strLength/2, strLength));
+        sc.close();
     }
 }

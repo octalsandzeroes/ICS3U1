@@ -21,6 +21,7 @@ public class Welcome{
         System.out.print("Enter your visitor number: ");
         visitorNum = Integer.parseInt(sc.nextLine());
         System.out.println(Welcome.welcomeMessage(name, visitorNum));
+        sc.close();
     }
 
     /*====================================================================

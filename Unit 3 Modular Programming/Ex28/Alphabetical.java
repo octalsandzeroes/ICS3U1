@@ -28,5 +28,6 @@ public class Alphabetical{
         } else {
             System.out.printf("\"%s\" is alphabetically equal to \"%s\"%n", str1, str2);    
         }
+        sc.close();
     }
 }

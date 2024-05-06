@@ -1,5 +1,3 @@
-import java.util.*;
-
 /*
 RandomNum
 By Andrew Martinus

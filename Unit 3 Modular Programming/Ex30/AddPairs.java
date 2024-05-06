@@ -39,5 +39,6 @@ public class AddPairs{
         }
         sumStr += ")";
         System.out.printf("%13s%s%n", "", sumStr);
+        sc.close();
     }
 }

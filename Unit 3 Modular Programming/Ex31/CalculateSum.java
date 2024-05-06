@@ -20,7 +20,7 @@ public class CalculateSum{
         System.out.print("Enter the right side bound: ");
         to = Integer.parseInt(sc.nextLine());
         System.out.printf("The sum of the integers between %d to %d is %d", from, to, sumRange(from, to));
-        
+        sc.close();
     }
 
     /*====================================================================

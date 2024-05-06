@@ -23,5 +23,6 @@ public class Exponent{
         // prints the resultant power
         power = Math.pow(base, exponent);
         System.out.printf("%f^%f = %f", base, exponent, power);
+        sc.close();
     }
 }

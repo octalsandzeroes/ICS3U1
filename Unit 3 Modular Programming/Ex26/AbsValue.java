@@ -21,5 +21,6 @@ public class AbsValue{
         // prints the resultant abs value
         absValue = Math.abs(value);
         System.out.printf("|%f| = %f", value, absValue);
+        sc.close();
     }
 }

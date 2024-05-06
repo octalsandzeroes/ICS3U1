@@ -27,5 +27,6 @@ public class Divide17{
         sumNum = Double.parseDouble(sumStr);
         result = sumNum/DIVISOR;
         System.out.printf("%s / %d = %.2f", sumStr, DIVISOR, result);
+        sc.close();
     }
 }
