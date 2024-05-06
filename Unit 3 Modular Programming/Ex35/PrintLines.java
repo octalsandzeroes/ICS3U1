@@ -1,21 +1,33 @@
-import java.util.*;
 import java.io.*;
-import java.nio.file.Paths;
 
 /*
 PrintLines
 By Andrew Martinus
 Last modified on May 5, 2024
-This program reads and prints out each line from a file called "line.txt"
+This program reads and prints out each line from a file
 */
 
 public class PrintLines{
     // main method
     public static void main(String[] args){
-        final String FILE_NAME = "C:/Users/Andrew/Documents/Coding Projects/ICS3U1/Unit 3 Modular Programming/Ex35/line.txt";
-        File f = new File(FILE_NAME);
-        System.out.println(f.getAbsolutePath());
-        System.out.println(Paths.get("").toAbsolutePath());
-        //FileReader reader = new FileReader(FILE_NAME);
+        // static variable for the file in focus
+        final String FILE_NAME = "line.txt";
+
+        // declares the string variable to store each read line
+        String lineIn;
+
+        // reads and prints each line of
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(FILE_NAME));
+            lineIn = in.readLine();
+            while (lineIn != null){
+                System.out.println(lineIn);
+                lineIn = in.readLine();
+            }
+            in.close();
+        } catch (IOException e) {
+            System.out.println("Problem reading " + e.getMessage());
+        }
+
     }
 }
