@@ -32,5 +32,7 @@ public class InputAndVariables {
 
         double dtest = scannerObject.nextDouble(); // scanner has more than just nextLine and nextInt
         System.out.println(dtest);
+
+        scannerObject.close();
     }
 }

@@ -42,5 +42,7 @@ public class CodingStyle { // Classes start with capitals, variables dont
 
         dtest = scannerObject.nextDouble(); // scanner has more than just nextLine and nextInt
         System.out.println(dtest);
+
+        scannerObject.close();
     }
 }
