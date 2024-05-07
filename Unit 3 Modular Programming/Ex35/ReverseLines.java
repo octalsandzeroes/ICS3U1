@@ -17,32 +17,20 @@ public class ReverseLines{
         // declares the string array variable to store each read line
         String[] lineIn;
 
-        // 
+        // initializes the lineIn array with the first line of the file and stores each line from the file and prints them in reverse
         try {
             Scanner sc = new Scanner(inputFile);
-            lineIn = in.readLine();
-            while (lineIn != null){
-                System.out.println(lineIn);
-                lineIn = in.readLine();
+            lineIn = new String[Integer.parseInt(sc.nextLine())];
+            for (int i = lineIn.length-1; i >= 0; i--){
+                lineIn[i] = sc.nextLine();
             }
-            in.close();
+            for (int i = 0; i < lineIn.length; i++){
+                System.out.println(lineIn[i]);
+            }
+        } catch (InputMismatchException e){
+            System.out.println("\nNon-integer data detected. File read terminated!");
         } catch (IOException e) {
             System.out.println("Problem reading " + e.getMessage());
         }
-        
-        // reads and prints each line of
-        try {
-
-            BufferedReader in = new BufferedReader(new FileReader(FILE_NAME));
-            lineIn = in.readLine();
-            while (lineIn != null){
-                System.out.println(lineIn);
-                lineIn = in.readLine();
-            }
-            in.close();
-        } catch (IOException e) {
-            System.out.println("Problem reading " + e.getMessage());
-        }
-
     }
 }
