@@ -27,6 +27,7 @@ public class ReverseLines{
             for (int i = 0; i < lineIn.length; i++){
                 System.out.println(lineIn[i]);
             }
+            sc.close();
         } catch (InputMismatchException e){
             System.out.println("\nNon-integer data detected. File read terminated!");
         } catch (IOException e) {
