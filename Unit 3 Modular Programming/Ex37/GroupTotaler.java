@@ -1,8 +1,5 @@
 import java.io.*;
-import java.text.NumberFormat;
 import java.util.*;
-
-import javax.imageio.IIOException;
 
 /*
 GroupTotaler
@@ -16,33 +13,30 @@ public class GroupTotaler {
         // the static variable for the input file's name
         final String FILE_NAME = "input.txt";
 
-        // 
+        // input variables
         String lineIn = "";
         double sum = 0;
         
         try{
             BufferedReader in = new BufferedReader(new FileReader(FILE_NAME));
-
-            // prints the first group name
             lineIn = in.readLine();
             System.out.println(lineIn);
+            lineIn = in.readLine();
             while (lineIn != null){
                 try {
-                    lineIn = in.readLine();
-                    if (lineIn != null){
-                        sum += Double.parseDouble(lineIn);
-                    }
+                    lineIn = Double.parseDouble(lineIn) + "";
+                    sum += Double.parseDouble(lineIn);
                 } catch (NumberFormatException f){
                     if (sum == (int) sum){
                         System.out.printf("Sum = %d%n%n", (int) sum);
                     } else {
                         System.out.printf("Sum = %f%n%n", sum);
                     }
-                    sum = 0;
                     System.out.println(lineIn);
-                }
+                    sum = 0;
+                }                
+                lineIn = in.readLine();
             }
-            // prints the last group values
             if (sum == (int) sum){
                 System.out.printf("Sum = %d%n%n", (int) sum);
             } else {
