@@ -34,5 +34,6 @@ public class Discriminant {
         } else {
             System.out.println("One root");
         }
+        sc.close();
     }
 }

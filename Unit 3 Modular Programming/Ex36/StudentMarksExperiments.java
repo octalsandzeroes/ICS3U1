@@ -8,6 +8,7 @@ Last modified on May 5, 2024
 This program aims to tinker with using BufferedReader and BufferedWriter in methods
 */
 
+
 public class StudentMarksExperiments {
     public static void main(String[] args) {
         // static variable for the file in focus and the times table upper bound
@@ -30,23 +31,24 @@ public class StudentMarksExperiments {
 
         // initializes and assigns values to the test score array and writes to a second file the averages of the tests for each student   
         // initializes the 2D array with integer values from the file
-        students = Integer.parseInt(autobufferedread(sourceIn, true));
-        tests = Integer.parseInt(autobufferedread(sourceIn, true));
+//        students = Integer.parseInt(autobufferedread(sourceIn, true));
+//        tests = Integer.parseInt(autobufferedread(sourceIn, true));
         System.out.println("Students: " + students + " Tests: " + tests);
         scores = new String[students][tests];
         
         // reads each character from the file in focus and appends characters not seperated by '\n' or ' ' to each index in the array
-        for (int i = 0; i < students; i++){
-            for (int j = 0; j < tests; j++){
-                scores[i][j] = "";
-                do{
-                    charIn = Integer.parseInt(autobufferedread(sourceIn, false));
-                    if ((char) charIn != ' ' && (char) charIn != '\n' && charIn != -1){
-                        scores[i][j] += (char) charIn;
-                    }
-                } while ((char) charIn != ' ' && (char) charIn != '\n' && charIn != -1);
-            }
-        }
+//        for (int i = 0; i < students; i++){
+//            for (int j = 0; j < tests; j++){
+//                scores[i][j] = "";
+//
+//                do{
+//                    charIn = Integer.parseInt(autobufferedread(sourceIn, false));
+//                    if ((char) charIn != ' ' && (char) charIn != '\n' && charIn != -1){
+//                        scores[i][j] += (char) charIn;
+//                    }
+//                } while ((char) charIn != ' ' && (char) charIn != '\n' && charIn != -1);
+//            }
+//        }
 
         /* prints the 2D array
         System.out.println();
@@ -75,7 +77,7 @@ public class StudentMarksExperiments {
 
 
         // writes the student number of the student with the highest average
-        lineIn = autobufferedread(outputIn, true);
+//        lineIn = autobufferedread(outputIn, true);
         System.out.println(lineIn);
         while (counter < students){
             // System.out.println("lineIn: " + Double.parseDouble(lineIn) + " highest:" + highest);
@@ -84,7 +86,7 @@ public class StudentMarksExperiments {
                 highest = Double.parseDouble(lineIn);
                 bestStudent = counter;
             }
-            lineIn = autobufferedread(outputIn, true);
+//            lineIn = autobufferedread(outputIn, true);
             System.out.println(counter);
         }
         autobufferedwrite(bestStudent + "\n", OUTPUT_FILE, true);

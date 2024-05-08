@@ -28,5 +28,6 @@ public class Salary {
             System.out.printf("Your salary for this month is $%.2f.", (double) DEFAULT_SALARY);
         }
         
+        sc.close();
     }
 }

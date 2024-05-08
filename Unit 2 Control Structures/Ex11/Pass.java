@@ -31,5 +31,6 @@ public class Pass {
         } while(input != (Double.parseDouble(ANSWERS[choice-1])));
         // prints if correct
         System.out.println("\nThat's correct!");
+        sc.close();
     }
 }

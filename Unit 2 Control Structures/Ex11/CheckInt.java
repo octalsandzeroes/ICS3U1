@@ -35,5 +35,6 @@ public class CheckInt {
         if (inputValue%7==0){
             System.out.println("Your number is a multiple of 7!");
         }
+        sc.close();
     }
 }

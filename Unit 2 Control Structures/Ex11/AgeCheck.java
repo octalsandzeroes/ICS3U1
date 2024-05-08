@@ -24,6 +24,6 @@ public class AgeCheck {
         } else { // if old enough it prints that the user is old enough to vote
             System.out.println("OLD ENOUGH TO VOTE.");
         }
-        
+        sc.close();
     }
 }
