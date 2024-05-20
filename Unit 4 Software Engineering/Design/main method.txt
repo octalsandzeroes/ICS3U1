@@ -2,18 +2,21 @@ main method:
 	static string variables for the employee id file, total rooms list file, and reservations list file
 	static string variable for the admin user id
 
-	initializes login status boolean variable as 0
+	initializes a login status string as "0-null"
+	initializes a login type integer as 0
+	declares an employee name string
 	declares an available rooms string array
 	declares an reserved rooms string array
 
 	creates a scanner object
-	
 
 	while true:
-		runs the employeelogin method
+		assigns the login status string return value of the employeelogin method
+		assigns the login type to be the (login status string).split("-", 2)[0]
+		assigns the employee name to be the (login status string).split("-", 2)[1]
 
-		while login status is 1 (admin):
-		while login status is 2 (not admin):
+		while login type is "1" (admin):
+		while login type is "2" (not admin):
 			prints an option menu of all the options you can do and a corresponding number
 			takes in a user input from the scanner and checks if it is an integer, if its not any of the following options do nothing at all
 			switch case block:
@@ -21,9 +24,10 @@ main method:
 					assigns the available rooms string array the return value of the list available rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
 					for the length of the available rooms string array, print each element in the list (each room)
 				case 2 (list the reserved rooms for a given date):
-					assigns the reserved rooms string array the return value of the list available rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
+					assigns the reserved rooms string array the return value of the list reservations method (gives the scanner, total rooms list file string, and the reservations list file string)
 					for the length of the reserved rooms string array, print each element in the list (each room)
 				case 3 (make a reservation for a room):
+					calls the reserve rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
 				case 4 ():
 				case 5 ():
 				case 6 ():
@@ -31,13 +35,13 @@ main method:
 				case 0 (log out):
 					assigns the login status boolean variable a value of 0
 				break:
-					that is not a valid option message/do nothing
+					prints a message that the input is not a valid option/do nothing
 
 
 employeelogin method (returns an integer denoting the login status and takes in the scanner object and the admin user id):
 	declare a scanner employee input string variable, a scanner pin input string variable, a line input string variable, a first name string variable, a last name string variable
 	initialize a boolean employee check as false, a boolean pin check as false
-	initialize a finish state integer variable as 0
+	declare a finish state string
 
 	while the boolean check is false:
 		// employee id check loop
@@ -49,7 +53,7 @@ employeelogin method (returns an integer denoting the login status and takes in 
 		catches if the input cannot be casted into an integer and prints an error that the id is invalid
 		while the input is not 6 in length, loop
 		try:
-			creates a buffered reader object for the employee id list file
+			creates a new buffered reader for the employee id list file
 			assigns the line input variable to the first line of the file
 			while the line input variable is not equal to null and boolean employee check is false:
 				if the line input variable (which will be an employee id) is equal (string compare method) to the scanner input (employee id):
@@ -68,17 +72,17 @@ employeelogin method (returns an integer denoting the login status and takes in 
 				while the input is not 4 in length or equal to 0, loop
 				if the line input variable (which by file formatting will be on the pin) is equal to the scanner pin input:
 					assigns the boolean pin check a true value
-					assigns the name string variable to the next line in the file
-					prints a welcome message if with the name of the employee
+					assigns the employee name string variable to the next line in the file
+					prints a welcome message if with the employee name string
 					if the scanner employee id input is equal to the admin user id:
-						assigns the finish state integer variable a 1
+						assigns the finish state integer variable a "1-" + employee name string
 					else:
-						assign the finish state integer variable a 2
+						assign the finish state integer variable a "2-" + employee name string
 				else:
 					prints an error message on that the pin is incorrect
 			close the buffered reader
 		catches IO exception
-	returns the finish state integer variable
+	returns the finish state string variable
 
 
 get date method (returns a string and takes in a scanner object):
@@ -113,13 +117,14 @@ get date method (returns a string and takes in a scanner object):
 list available rooms method (returns a string array and takes in the scanner object, the total rooms file name and reserved rooms file name):
 	declare an reserved rooms string array, an available rooms string array, a total rooms string array
 	declare a date string variable
+	initializes an array length counter as 0
 	
 	// this actually just the default sudo code to create an array of non duplicates lol
 	assigns the date string variable the return value from the get date method (gives it the scanner)
 
 	try:
-		creates the buffered reader for the total rooms file
-		creates the buffered reader for the reserved rooms file
+		creates a new buffered reader for the total rooms file
+		creates a new buffered reader for the reservations list file
 
 		// creates the reserved rooms array
 		reads through the reserved rooms list to the end and if the date string variable equals a line (date) in the file, increment the array length counter
@@ -136,62 +141,128 @@ list available rooms method (returns a string array and takes in the scanner obj
 		initializes a the available rooms array of length discovered above
 		do a for loop to compare and save the available rooms into the new array
 		
-		closes the buffered readers
+		closes the buffered reader for the total rooms file
+		closes the buffered reader for the reservations list file
 	catches an IO exception 
 	
 	returns the available rooms array
 
 
-list reserved rooms method (returns a string array and takes in the scanner object and the reserved rooms file name):
-	declare an reserved rooms string array
+list reservations method (returns a string array and takes in the scanner object and the reserved rooms file name):
+	declare an reservations string array
 	declare a date string variable
+	initializes an array length integer vairable as 0
 	
 	assigns the date string variable the return value from the get date method (gives it the scanner)
 
 	try:
-		creates the buffered reader for the reserved rooms file
+		creates a new buffered reader for the reservations list file
 
 		// creates the reserved rooms array
 		reads through the reserved rooms list to the end and if the date string variable equals a line (date) in the file, increment the array length counter
 		initializes the reserved rooms array with the length discovered above
-		reads through the reserved rooms list to the end and if the date string variable equals a line (date) in the file, save next line (room) to the reserved rooms array
+		reads through the reserved rooms list to the end and if the date string variable equals a line (date) in the file, save next line (room) to the list reservations string array
 
 		closes the buffered reader
 	catches an IO exception 
 	
-	returns the reserved rooms array
+	returns the reservations array
 
 
-list available rooms method (returns void, takes in the scanner object, the total rooms file name and reserved rooms file name)
-	declares an available rooms string array and a name string array
-	declares a chosen room string variable
-	initializes a name entered boolean as false and a room chosen boolean as false
+reserve rooms method (returns void, takes in the scanner object, the total rooms file name and reserved rooms file name)
+	declares an available rooms string array
+	declares a customer name string variable
+	declares a chosen room integer variable
+	initializes room chosen boolean as false
 	
-	prompts the user for their first and last name
-	while the name entered boolean is false:
-		assigns the input string variable a scanner nextLine user input
-		assigns the name string array to the input.split(" ", 0)
-		if name string array.length is not equal to 2:
-			print an error message that the name entered is invalid
-		else:
-			assigns the name entered boolean a value of true
-
+	prompts the user to enter a first and last name
+	do:
+		assigns the customer name string variable a scanner nextLine user input
+		if (customer name string variable).split(" ", 0).length is less than 2:
+			print an error message that at least a first and last name is needed and asks for a reinput
+	while (customer name string variable).split(" ", 0).length is less than 2
+	
 	assigns the available rooms string array to a the return value of the list available rooms method (gives it the total rooms file name and reserved rooms file name as parameters)
 
-	prints the array available rooms
+	prints the array of available rooms
 	prompts the user to enter their chosen room
 	while the room chosen boolean variable is false:
 		try:
-			assigns the chosen room string variable to an Integer.parseInt(sc.nextLine()) + ""
+			assigns the chosen room integer variable to an Integer.parseInt(sc.nextLine()) + ""
 		catches a NumberFormat exception and prints an error message that the entered room is invalid
+		
+		/////////////////////////////////////////////////////////////////////////////// FOR LOOP BOOLEAN CONDITIONAL NEEDED
 		if the user input matches an element from the available rooms array:
 			try:
-				creates a new buffered writer output to the  with appending as true
+				creates a new buffered writer output to the reservations list file with appending as true
+				write a new line with the customer name string
 				write a new line with the date of the reservation
 				write a new line with the room number
-				write a new line with the name string array in one line
+				write a new line with the employee name string
 			catches an IOExceptionbook
-		if there is no match throw an error message and ask for another input
+		else:
+			print an error message asking for another input
 		
 		
+list manageable reservations method (returns a string array, takes in the scanner object, the reserved rooms file name, and a customer name string variable)
+	declares a manageable reservations string array
+	initializes an array length integer variable as 0
+	
+	try:
+		creates a new buffered reader for the reservations list file
 
+		// creates the manageable reserved rooms array
+		reads through the manageable reserved rooms list to the end and if the customer name string variable equals a line (name) in the file, increment the array length counter
+		initializes the manageable reserved rooms array with the length discovered above
+		reads through the manageable reserved rooms list to the end and if the date string variable equals a line (name) in the file, save (readLine (date) + " " + readLine (room) + " " + readLine (employee name)) to the list manageable reservations string array
+
+		closes the buffered reader
+	catches an IO exception 
+
+	returns the manageable reservations string array
+
+
+cancel reservation method (returns void, takes in the scanner object and the reserved rooms file name)
+	declares a manageable reservations string array
+	declares a customer name string variable
+	declares a chosen reservation integer variable
+	initializes reservation chosen boolean as false
+
+	// gets the customer name	
+	prompts the user to enter a first and last name
+	do:
+		assigns the customer name string variable a scanner nextLine user input
+		if (customer name string variable).split(" ", 0).length is less than 2:
+			print an error message that at least a first and last name is needed and asks for a reinput
+	while (customer name string variable).split(" ", 0).length is less than 2
+
+	assigns the manageable reservations string array to the return value of the list manageable reservations method (gives it the scanner object and the reserved rooms file name)
+
+	// allows the user to choose a reservation and if chosen deletes it
+	prints the array of manageable reservations
+	prompts the user to enter their chosen reservation
+	while the room chosen boolean variable is false:
+		do:
+			try:
+				assigns the chosen reservation integer variable to an Integer.parseInt(sc.nextLine())
+			catches a NumberFormat exception and prints an error message that the entered reservation is invalid
+			if the chosen reservation integer variable is greater than the length of the array of manageable reservations:
+				print an error message that the chosen reservation does not exist
+		while the chosen reservation integer variable is greater than the length of the array of manageable reservations
+		
+		if the chosen reservation integer variable equals 0:
+			prints a message that the cancellation has been aborted
+		else:
+			try:
+				creates a new buffered reader for the reservations list file
+				creates a new buffered writer output to the reservations list file with appending as false
+				
+				saves everything from the reservations list file to an array
+				stores all details from the reservation chosen to another array
+					first index name of the user entered
+					second index (manageable reservation array)[chosen reservation integer variable - 1].split(" ", 3)[0] (the date of the reservation)
+					second index (manageable reservation array)[chosen reservation integer variable - 1].split(" ", 3)[1] (the room number)
+					second index (manageable reservation array)[chosen reservation integer variable - 1].split(" ", 3)[2] (the name of the employee)
+				compares the two arrays and if there is a match, nuke the duplicates
+				for the duration of the file, overwrite it with the new array with the reservation removed
+			catches an IOExceptionbook
