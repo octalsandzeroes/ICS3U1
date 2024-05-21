@@ -1,9 +1,8 @@
 main method:
-	static string variables for the employee id file, total rooms list file, and reservations list file
+	static string variable for the employee id list file
+	static string variable for the total rooms list file
+	static string variable for the reservations list file
 	static string variable for the admin user id
-
-	initializes a login status string as "0-null"
-	initializes a login type integer as 0
 	declares an employee name string
 	declares an available rooms string array
 	declares an reserved rooms string array
@@ -12,34 +11,159 @@ main method:
 
 	while true:
 		assigns the login status string return value of the employeelogin method
-		assigns the login type to be the (login status string).split("-", 2)[0]
-		assigns the employee name to be the (login status string).split("-", 2)[1]
+		assigns the login type to be the .split part of the login status that is the employee type
+		assigns the employee name to be the .split part of the login status that is the employee name
 
 		while login type is "1" (admin):
-		while login type is "2" (not admin):
 			prints an option menu of all the options you can do and a corresponding number
 			takes in a user input from the scanner and checks if it is an integer, if its not any of the following options do nothing at all
+			
 			switch case block:
 				case 1 (list the available rooms for a given date):
 					assigns the available rooms string array the return value of the list available rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
 					for the length of the available rooms string array, print each element in the list (each room)
+				
 				case 2 (list the reserved rooms for a given date):
 					assigns the reserved rooms string array the return value of the list reservations method (gives the scanner, total rooms list file string, and the reservations list file string)
 					for the length of the reserved rooms string array, print each element in the list (each room)
+				
 				case 3 (make a reservation for a room):
 					calls the reserve rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
-				case 4 ():
-				case 5 ():
-				case 6 ():
-				case 7 ():
+				
+				case 4 (cancel a reservation for a room):
+					follows the generic remove data method
+				
+				case 5 (change the details of a reservation):
+					follows the generic edit data method
+
+				case 6 (change the pin number):
+					prompts the user for a new pin or 0 to abort
+					checks the pin to see if it is numerical and 4 digits long
+					edits the login status string acquired on login to include the new pin (split, replace element, concatonize)
+					calls a replacement method that deletes a line from a file and adds in a new one
+
+				case 7 (add a hotel room):
+					follows the generic append method (print, check duplicates, add)
+
+				case 8 (delete a hotel room):
+					follows the generic remove method (list, select, remove)
+
+				case 9 (add an employee):
+					follows the generic append method (print, check duplicates, add)
+
+				case 10 (delete an employee):
+					follows the generic remove method (purge)
+
 				case 0 (log out):
 					assigns the login status boolean variable a value of 0
 				break:
 					prints a message that the input is not a valid option/do nothing
 
 
-employeelogin method (returns an integer denoting the login status and takes in the scanner object and the admin user id):
-	declare a scanner employee input string variable, a scanner pin input string variable, a line input string variable, a first name string variable, a last name string variable
+		while login type is "2" (not admin):
+			prints an option menu of all the options you can do and a corresponding number
+			takes in a user input from the scanner and checks if it is an integer, if its not any of the following options do nothing at all
+			
+			switch case block:
+				case 1 (list the available rooms for a given date):
+					assigns the available rooms string array the return value of the list available rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
+					for the length of the available rooms string array, print each element in the list (each room)
+				
+				case 2 (list the reserved rooms for a given date):
+					assigns the reserved rooms string array the return value of the list reservations method (gives the scanner, total rooms list file string, and the reservations list file string)
+					for the length of the reserved rooms string array, print each element in the list (each room)
+				
+				case 3 (make a reservation for a room):
+					calls the reserve rooms method (gives the scanner, total rooms list file string, and the reservations list file string)
+				
+				case 4 (cancel a reservation for a room):
+					follows the generic remove data method
+				
+				case 5 (change the details of a reservation):
+					follows the generic edit data method
+
+				case 6 (change the pin number):
+					prompts the user for a new pin or 0 to abort
+					checks the pin to see if it is numerical and 4 digits long
+					edits the login status string acquired on login to include the new pin (split, replace element, concatonize)
+					calls a replacement method that deletes a line from a file and adds in a new one
+
+				case 0 (log out):
+					assigns the login status boolean variable a value of 0
+				break:
+					prints a message that the input is not a valid option/do nothing
+
+
+generic get file method [returns a string array] (takes the file that it is supposed to read from)
+	initializes a counter to start at 0
+	declares an array
+
+	try catch block that catches IOExceptions
+		creates a buffered reader
+		reads through a file until the end and increments a counter
+		initializes the array with the counter as the length
+		reads through a file again for the duration of a for loop and adds each line as an element to an array
+
+	returns the array
+
+
+generic edit contents method [returns a string array] (takes the file that it is supposed to edit and the data to replace/a scanner object)
+	declares an array
+
+	assigns the array a value corresponding to the return of the get file method
+	creates a new array by running a nested loop comparing the to be data wanted to be edited to the array, if there is a match, ask for an input(s) to replace it
+
+	returns the new array
+
+
+generic get purged contents method [returns a string array] (takes the file that it is supposed to write to and the data to remove)
+	declares an array
+
+	assigns the array a value corresponding to the return of the get file method
+	creates a new array by running a nested loop comparing the to be removed data to the array, if there is a match, do not add that element to the new array
+
+	returns the new array
+
+
+generic append method [returns void] (takes the file that it is supposed to write to and the data needed to be added)
+	in a try catch block create a new buffered writer with appending and just add it and close the buffered writer
+
+
+geneic remove method [returns void] (takes the file that it is supposed to write to and the data needed to be removed)
+	calls the get file method
+	calls the get purged contents method
+	in a try catch block create a new buffered writer without appeanding and overwrite the file contents
+
+
+get name [returns string] (takes the scanner object)
+	declares a name string variable
+	initializes a valid name boolean variable as true and a valid character boolean variable as false
+	initializes a name check counter integer variable as 0, a lowercase counter integer variable as 97, and an uppercase counter integer variable as 65
+
+	prints a prompt for the user to enter a name
+	a do while loop begins, which will run while the valid name boolean variable is false
+		ensures that the valid name boolean is true within the loop
+		assigns the name string variable the value from an input line from the scanner
+		// name validity check
+		while the valid name boolean is true and the name check counter integer is less than or equal to the length of the name string variable:
+			loops while the valid name boolean is true and the lowercase counter integer is less than the integer of 'z':
+				if the character at the name check counter integer in the string is equal to the character form of the lowercase counter integer:
+					assign the valid character boolean variable a true value
+			loops while the valid name boolean is true and the lowercase counter integer is less than the integer of 'Z':
+				if the character at the name check counter integer in the string is equal to the character form of the uppercase counter integer:
+					assign the valid character boolean variable a true value
+			if the valid character boolean variable is true:
+				increment the name check counter integer variable by 1
+				resets the values of the counters and valid character boolean back to what they had at the start of the method
+			else:
+				assign the valid name boolean variable a value of false
+				resets the values of the counters and other booleans back to what they had at the start of the method
+				prints an error message and prompts the user to reenter 
+	while the valid name boolean is false
+
+
+employeelogin method (returns a string of the login status and takes in the scanner object, the employee list file string, and the admin user id):
+	declare a scanner employee input string variable, a scanner pin input string variable, a line input string variable
 	initialize a boolean employee check as false, a boolean pin check as false
 	declare a finish state string
 
@@ -56,9 +180,9 @@ employeelogin method (returns an integer denoting the login status and takes in 
 			creates a new buffered reader for the employee id list file
 			assigns the line input variable to the first line of the file
 			while the line input variable is not equal to null and boolean employee check is false:
-				if the line input variable (which will be an employee id) is equal (string compare method) to the scanner input (employee id):
+				if the (line input variable).split("|", 3)[0] (which will be an employee id) is equal (string compare method) to the scanner input (employee id):
 					assigns the boolean employee check a true value
-					assigns the line input variable to the next line in the file
+				assigns the line input variable to the next line of the file
 			if employee check is false print a user not found message
 			// pin or return check loop
 			while boolean employee check is true and the boolean pin check is false:
@@ -70,14 +194,13 @@ employeelogin method (returns an integer denoting the login status and takes in 
 						else if it is not 4 digits print an error message that the pin is invalid
 					catches if the input cannot be casted into an integer and prints an error message that the pin is invalid
 				while the input is not 4 in length or equal to 0, loop
-				if the line input variable (which by file formatting will be on the pin) is equal to the scanner pin input:
+				if the (line input variable).split("|", 3)[1] (which will be on the pin) is equal to the scanner pin input:
 					assigns the boolean pin check a true value
-					assigns the employee name string variable to the next line in the file
-					prints a welcome message if with the employee name string
+					prints a welcome message if with (line input variable).split("|", 3)[2] (the employee name string)
 					if the scanner employee id input is equal to the admin user id:
-						assigns the finish state integer variable a "1-" + employee name string
+						assigns the finish state integer variable a "1|" + (line input variable).split("|", 3)[2] (the employee name string)
 					else:
-						assign the finish state integer variable a "2-" + employee name string
+						assign the finish state integer variable a "2|" + (line input variable).split("|", 3)[2] (the employee name string)
 				else:
 					prints an error message on that the pin is incorrect
 			close the buffered reader
@@ -95,6 +218,7 @@ get date method (returns a string and takes in a scanner object):
 		try:
 			sets the date string variable to a scanner nextLine input
 			// code block that checks the validity of dates (simple as per mr skujas instructions)
+			checks if there are "/" symbols where there are supposed to be them
 			assigns the split date string array variable to the date string variable.split("/", 0)
 			if (split date string array variable.length is equal to 3):
 				if (split date string array variable(0) is greater than or equal to 1 and less than or equal to 31):
@@ -151,7 +275,7 @@ list available rooms method (returns a string array and takes in the scanner obj
 list reservations method (returns a string array and takes in the scanner object and the reserved rooms file name):
 	declare an reservations string array
 	declare a date string variable
-	initializes an array length integer vairable as 0
+	initializes an array length integer variable as 0
 	
 	assigns the date string variable the return value from the get date method (gives it the scanner)
 
@@ -175,12 +299,7 @@ reserve rooms method (returns void, takes in the scanner object, the total rooms
 	declares a chosen room integer variable
 	initializes room chosen boolean as false
 	
-	prompts the user to enter a first and last name
-	do:
-		assigns the customer name string variable a scanner nextLine user input
-		if (customer name string variable).split(" ", 0).length is less than 2:
-			print an error message that at least a first and last name is needed and asks for a reinput
-	while (customer name string variable).split(" ", 0).length is less than 2
+	assigns the customer name string variable the 
 	
 	assigns the available rooms string array to a the return value of the list available rooms method (gives it the total rooms file name and reserved rooms file name as parameters)
 

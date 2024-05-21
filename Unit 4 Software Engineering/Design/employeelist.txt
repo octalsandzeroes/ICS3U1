@@ -1,13 +1,2 @@
-000000
-1234
-Admin User
-[6 digit integer]
-[4 digit integer]
-[first name] [last name]
-[6 digit integer]
-[4 digit integer]
-[first name] [last name]
-[6 digit integer]
-[4 digit integer]
-[first name] [last name]
-
+//[6 digit integer id]|[4 digit integer pin]|[first name] [last name]
+000000|1234|Admin User 
