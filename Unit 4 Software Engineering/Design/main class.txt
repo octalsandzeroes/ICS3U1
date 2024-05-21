@@ -3,6 +3,7 @@ main method:
 	static string variable for the total rooms list file
 	static string variable for the reservations list file
 	static string variable for the admin user id
+	
 	declares an employee name string
 	declares an available rooms string array
 	declares an reserved rooms string array

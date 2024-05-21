@@ -7,6 +7,14 @@ public class HotelOS {
         final String RESERVATIONS_LIST = "reservationslist.txt";
         final String ROOMS_LIST = "roomslist.txt";
         final String ADMIN_ID = "000000";
+        final String ADMIN_OPTIONS = "1) List the available rooms for a given date\n" + //
+                                    "2) List all the reservations for a given date\n" + //
+                                    "3) Look up all the reservations made under a certain name\n" + //
+                                    "4) Make a reservation for a room\n" + //
+                                    "5) Cancel a reservation for a room\n" + //
+                                    "6) Change the details on a reservation\n" + //
+                                    "7) Change PIN number\n" + //
+                                    "0) Log out\n";
 
         Scanner sc = new Scanner(System.in);
         
@@ -20,7 +28,7 @@ public class HotelOS {
                 loginType = Integer.parseInt(loginString.split("\\|", 4)[0]); // | is a metacharacter in regex, so it has to be escape charactered
                 employeeName = loginString.split("\\|", 4)[3];
             } while (loginType == 0);
-            
+/*
             try {  
                 BufferedReader in = new BufferedReader(new FileReader(EMPLOYEE_LIST));
                 int counter = 0;
@@ -48,9 +56,9 @@ public class HotelOS {
             } catch (IOException e){
                 System.out.println("E");
             }
-
+*/
             while (loginType == 1){
-
+                
             }
 
             while (loginType == 2){
@@ -131,11 +139,12 @@ public class HotelOS {
                     employeeID = sc.nextLine();
                     intCheck = Integer.parseInt(employeeID);
 
-                    if (employeeID == null || employeeID.length() != 6){
+                    if (employeeID.length() != 6){
                         System.out.print("Invalid employee ID, please retry: ");
                     }
                 } catch (NumberFormatException e){
                     System.out.print("Invalid employee ID, please retry: ");
+                    employeeID = null;
                 }
             } while (employeeID == null || employeeID.length() != 6);
             // validates the employee ID
@@ -153,8 +162,8 @@ public class HotelOS {
                 if (employeeIDCheck == false) System.out.println("The employee ID you entered does not exist.");
             
                 // gets a pin and validates it
+                System.out.print("Enter a 4 digit pin or enter \"0\" to go back: ");
                 while (employeeIDCheck == true && pinCheck == false) {
-                    System.out.print("Enter a 4 digit pin or enter \"0\" to go back: ");
                     // gets a legal employee ID
                     do {
                         // gets a numerical pin
@@ -167,21 +176,25 @@ public class HotelOS {
                                 employeeIDCheck = false;
                             } else if (pin.length() != 4){
                                 System.out.print("Invalid pin, please retry: ");
+                                pin = null;
                             }
                         } catch (NumberFormatException e){
                             System.out.print("Invalid pin, please retry: ");
+                            pin = null;
                         }
-                        
-                    } while (pin == null || pin.length() != 4 && pin.compareTo("0") != 0);
+                    } while (pin == null || pin.length() != 4 && pin.compareTo(exitCode) != 0);
                     
                     if (pin.compareTo(lineIn.split("\\|", 3)[1]) == 0){
                         pinCheck = true;
-                        System.out.printf("Welcome %s%n", lineIn.split("\\|", 3)[2]);
+                        System.out.printf("%nWelcome %s%n", lineIn.split("\\|", 3)[2]);
                         if (employeeID.compareTo(ADMIN_ID) == 0){
                             loginString = "1|" + lineIn;
                         } else {
                             loginString = "2|" + lineIn;
                         }
+                    } else {
+                        System.out.print("Invalid pin, please retry: ");
+                        pin = null;
                     }
                 }
 
