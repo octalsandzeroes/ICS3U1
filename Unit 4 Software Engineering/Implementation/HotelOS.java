@@ -2,14 +2,14 @@ import java.util.*;
 import java.io.*;
 
 public class HotelOS {
-    public static void main(String[] args) {
+    public static void main(String[] args){
         final String EMPLOYEE_LIST = "employeelist.txt";
         final String RESERVATIONS_LIST = "reservationslist.txt";
         final String ROOMS_LIST = "roomslist.txt";
         final String ADMIN_ID = "000000";
         final String ADMIN_OPTIONS = "\n1) List the available rooms for a given date\n" + //
                                     "2) List all the reservations for a given date\n" + //
-                                    "3) Look up all the reservations made under a certain name\n" + //
+                                    "3) List all the reservations made under a certain name\n" + //
                                     "4) Make a reservation for a room\n" + //
                                     "5) Cancel a reservation for a room\n" + //
                                     "6) Change the details on a reservation\n" + //
@@ -30,13 +30,15 @@ public class HotelOS {
 
         Scanner sc = new Scanner(System.in);
         
-        int loginType = 0;
-        int userInput = -1;
+        String[] fileArray;
+        String[] matchArray;
+        String[] dateAvailableRoomsArray;
         String loginString;
         String employeeName;
+        int loginType = 0;
+        int userInput = -1;
         boolean validOption = false;
         boolean taskDone = true;
-
 
         while (true){
             do {
@@ -52,7 +54,7 @@ public class HotelOS {
                     taskDone = false;
                 }
 
-                while (validOption == false) {
+                while (validOption == false){
                     try {
                         userInput = Integer.parseInt(sc.nextLine());
                         validOption = true;
@@ -61,14 +63,76 @@ public class HotelOS {
                     }
                 }
 
-                switch (userInput) {
+                switch (userInput){
                     case 1:
-                        System.out.println(getname(sc));
+                        fileArray = getfile(ROOMS_LIST);
+                        matchArray = getnotmatch(getfile(RESERVATIONS_LIST), getdate(sc));
+                        if (fileArray[0].compareTo("") == 0){
+                            System.out.println("No available rooms.\n");
+                        } else if (matchArray[0].compareTo("") == 0){
+                            System.out.println("All rooms are available: ");
+                            for (int i = 0; i < fileArray.length; i++){
+                                System.out.printf("%d) Room %s%n", i+1, fileArray[i]);
+                            }
+                        } else {
+                            dateAvailableRoomsArray = getdateavailablerooms(fileArray, matchArray);
+                            System.out.println("The available rooms are: ");
+                            for (int i = 0; i < dateAvailableRoomsArray.length; i++){
+                                System.out.printf("%d) Room %s%n", i+1, fileArray[i]);
+                            }
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 2:
+                        matchArray = getmatch(getfile(RESERVATIONS_LIST), getdate(sc));
+                        System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
+                        for (String i: matchArray){
+                            System.out.println(i);
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 3:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 4:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 5:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 6:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 7:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 8:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 9:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 10:
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    case 11:
                         taskDone = true;
                         validOption = false;
                         break;
                     case 0:
                         loginType = 0;
+                        taskDone = true;
+                        validOption = false;
                         break;
                     default:
                         System.out.print("Invalid option, please retry: ");
@@ -102,7 +166,7 @@ public class HotelOS {
         
         System.out.print("Enter a first and last name like such '[FIRST] [LAST]': ");
         
-        do{
+        do {
             if (validName == false) validName = true;
             nameString = sc.nextLine();
             
@@ -158,7 +222,7 @@ public class HotelOS {
                     Integer.parseInt(dateCheckArray[2]) >= 2024 && Integer.parseInt(dateCheckArray[2]) <= 2054){
                             validDate = true;
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException e){
                     System.out.print("Invalid date, please retry: ");
                 }
             }
@@ -167,6 +231,181 @@ public class HotelOS {
 
         return date;
     }
+
+
+    public static String[] getfile (String fileName){
+        String[] fileArray;
+        String lineIn;
+        int arraySizeCounter = 0;
+
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+
+            // gets the number of lines in the file
+            lineIn = in.readLine();
+            while (lineIn != null){
+                arraySizeCounter++;
+                lineIn = in.readLine();
+            }
+            in.close();
+        } catch (IOException e){
+            System.out.println("An error occured! Please call a support technician. " + e.getMessage());
+        }
+        
+        // assigns the data from each line into each index in the file storing array
+        if (arraySizeCounter != 0){
+            fileArray = new String[arraySizeCounter];
+            try {
+                BufferedReader in = new BufferedReader(new FileReader(fileName));
+
+                lineIn = in.readLine();
+                // a for loop can be used since the size of the file has been found
+                for (int i = 0; i < arraySizeCounter; i++){
+                    fileArray[i] = lineIn;
+                    lineIn = in.readLine();
+                }
+                in.close();
+            } catch (IOException e){
+                System.out.println("An error occured! Please call a support technician. " + e.getMessage());
+            }
+        // niche case if there is nothing in the file
+        } else {
+            fileArray = new String[1];
+            fileArray[0] = "";
+        }
+        
+        return fileArray;
+    }
+
+
+    public static String[] getmatch (String[] fileArray, String match){
+        String[] matchArray;
+        String[] parsedArray;
+        int arraySizeCounter = 0;
+
+        if (fileArray[0].compareTo("") != 0){
+            for (int i = 0; i < fileArray.length; i++){
+                // initializes the string with parsed data from each element of the file storing array
+                parsedArray =  fileArray[i].split("\\|", 0);
+                // compares the parsed array with the data to match and increments a counter if a match is detected
+                for (int j = 0; j < parsedArray.length; j++){
+                    if (parsedArray[j].compareTo(match) == 0){
+                        arraySizeCounter++;
+                    }
+                }
+            }
+
+            if (arraySizeCounter != 0){
+                matchArray = new String[arraySizeCounter];
+                arraySizeCounter = 0;
+
+                for (int i = 0; i < fileArray.length; i++){
+                    // initializes the string with parsed data from each element of the file storing array
+                    parsedArray =  fileArray[i].split("\\|", 0);
+                    // compares the parsed array with the data to match and increments a counter if a match is detected
+                    for (int j = 0; j < parsedArray.length; j++){
+                        if (parsedArray[j].compareTo(match) == 0){
+                            matchArray[arraySizeCounter] = fileArray[i];
+                            arraySizeCounter++;
+                        }
+                    }
+                }
+            } else {
+                matchArray = new String[1];
+                matchArray[0] = "";
+            }
+        } else {
+            matchArray = new String[1];
+            matchArray[0] = "";
+        }
+
+        return matchArray;
+    }
+
+    public static String[] getnotmatch (String[] fileArray, String match){
+        String[] notMatchArray;
+        String[] parsedArray;
+        int arraySizeCounter = 0;
+        boolean validMatch = false;
+        
+        if (fileArray[0].compareTo("") != 0){
+            for (int i = 0; i < fileArray.length; i++){
+                // initializes the string with parsed data from each element of the file storing array
+                parsedArray =  fileArray[i].split("\\|", 0);
+                // compares the parsed array with the data to match and increments a counter if a match is not detected
+                for (int j = 0; j < parsedArray.length; j++){
+                    if (parsedArray[j].compareTo(match) == 0){
+                        validMatch = true;
+                    }
+                }
+                if (validMatch == false){
+                    arraySizeCounter++;
+                }
+                validMatch = false;
+            }
+
+            if (arraySizeCounter != 0){
+                notMatchArray = new String[arraySizeCounter];
+                arraySizeCounter = 0;
+
+                for (int i = 0; i < fileArray.length; i++){
+                    // initializes the string with parsed data from each element of the file storing array
+                    parsedArray =  fileArray[i].split("\\|", 0);
+                    // compares the parsed array with the data to match and saves the data if no match is detected
+                    for (int j = 0; j < parsedArray.length; j++){
+                        if (parsedArray[j].compareTo(match) == 0){
+                            validMatch = true;
+                        }
+                    }
+                    if (validMatch == false){
+                        notMatchArray[arraySizeCounter] = fileArray[i];
+                        arraySizeCounter++;
+                    }
+                    validMatch = false;
+                }
+            } else {
+                notMatchArray = new String[1];
+                notMatchArray[0] = "";
+            }
+        } else {
+            notMatchArray = new String[1];
+            notMatchArray[0] = "";
+        }
+
+        return notMatchArray;
+    }
+
+    
+    public static String[] getdateavailablerooms (String[] fileArray, String[] notMatchArray){
+        String[] dateAvailableRoomArray;
+        int arraySizeCounter = 0;
+
+        for (int i = 0; i < fileArray.length; i++){
+            for (int j = 0; j < notMatchArray.length; j++){
+                if (fileArray[i].compareTo(notMatchArray[j].split("\\|", 0)[3]) == 0){
+                    arraySizeCounter++;
+                }
+            }
+        }
+        
+        if (arraySizeCounter != 0){
+            dateAvailableRoomArray = new String[arraySizeCounter];
+            arraySizeCounter = 0;
+
+            for (int i = 0; i < fileArray.length; i++){
+                for (int j = 0; j < notMatchArray.length; j++){
+                    if (fileArray[i].compareTo(notMatchArray[j].split("\\|", 0)[3]) == 0){
+                        dateAvailableRoomArray[arraySizeCounter] = fileArray[i];
+                    }
+                }
+            }
+        } else {
+            dateAvailableRoomArray = new String[1];
+            dateAvailableRoomArray[0] = "";
+        }
+
+        return dateAvailableRoomArray;
+    }    
 
 
     /*============================================================================
@@ -222,7 +461,7 @@ public class HotelOS {
             
                 // gets a pin and validates it
                 System.out.print("Enter a 4 digit pin or enter \"0\" to go back: ");
-                while (employeeIDCheck == true && pinCheck == false) {
+                while (employeeIDCheck == true && pinCheck == false){
                     // gets a legal employee ID
                     do {
                         // gets a numerical pin
