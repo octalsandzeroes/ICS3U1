@@ -1,5 +1,6 @@
 import java.util.*;
 import java.io.*;
+import java.nio.BufferOverflowException;
 
 public class HotelOS {
     public static void main(String[] args){
@@ -35,6 +36,8 @@ public class HotelOS {
         String[] dateAvailableRoomsArray;
         String loginString;
         String employeeName;
+        String selectedLine;
+        String newLine;
         int loginType = 0;
         int userInput = -1;
         boolean validOption = false;
@@ -68,43 +71,38 @@ public class HotelOS {
                         // gets the list of all existing rooms
                         fileArray = getfile(ROOMS_LIST);
                         
-                        System.out.println("Rooms List: ");
-                        for (String i: fileArray){
-                            System.out.println(i);
-                        }
-
                         // gets the list of reserved rooms for a given date
                         matchArray = getmatch(getfile(RESERVATIONS_LIST), getdate(sc));
 
-                        System.out.println("Matches: ");
-                        for (String i: matchArray){
-                            System.out.println(i);
-                        }
-                        
+                        // if there are no rooms in the hotel 
                         if (fileArray[0].compareTo("") == 0){
-                            System.out.println("There are no available rooms.\n");
+                            System.out.println("\nThere are no available rooms.\n");
+                        // if there are no reserved rooms
                         } else if (matchArray[0].compareTo("") == 0){
-                            System.out.println("All rooms are available: ");
+                            System.out.println("\nAll rooms are available: ");
                             for (int i = 0; i < fileArray.length; i++){
                                 System.out.printf("%d) Room %s%n", i+1, fileArray[i]);
                             }
                         } else {
                             dateAvailableRoomsArray = getdateavailablerooms(fileArray, matchArray);
+                            // if some rooms are available
                             if (dateAvailableRoomsArray[0].compareTo("") != 0){
-                                System.out.println("The available rooms are: ");
+                                System.out.println("\nThe available rooms are: ");
                                 for (int i = 0; i < dateAvailableRoomsArray.length; i++){
                                     System.out.printf("%d) Room %s%n", i+1, dateAvailableRoomsArray[i]);
                                 }
+                            // if all rooms are unavailable
                             } else {
-                                System.out.println("There are no available rooms.");
+                                System.out.println("\nThere are no available rooms.");
                             }
-                        }
-                        
+                        }  
                         taskDone = true;
                         validOption = false;
                         break;
                     case 2:
+                        // gets the reservations matching a given date
                         matchArray = getmatch(getfile(RESERVATIONS_LIST), getdate(sc));
+                        System.out.println("\nThe reservations for that date are as follows: ");
                         System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
                         for (String i: matchArray){
                             System.out.println(i);
@@ -113,18 +111,57 @@ public class HotelOS {
                         validOption = false;
                         break;
                     case 3:
+                        // gets the reservations matching a given name
+                        matchArray = getmatch(getfile(RESERVATIONS_LIST), getname(sc));
+                        System.out.println("\nThe reservations for that name are as follows: ");
+                        System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
+                        for (String i: matchArray){
+                            System.out.println(i);
+                        }
                         taskDone = true;
                         validOption = false;
                         break;
                     case 4:
+                        // gets the details for a new reservations and concatonizes them into a string
+                        newLine = createreservation(sc, ROOMS_LIST, RESERVATIONS_LIST, employeeName);
+                        // writes to the reservation file if a reservation is available
+                        if (newLine.compareTo("") != 0){
+                            System.out.println("\nReservation created:");
+                            System.out.println(newLine);
+                            writetofile(RESERVATIONS_LIST, newLine);
+                        }
                         taskDone = true;
                         validOption = false;
                         break;
                     case 5:
+                        // prints the list of reservations and gets a selected reservation
+                        selectedLine = selectreservation(sc, RESERVATIONS_LIST);
+                        // writes to the reservation file the replacement if a reservation is able to be selected
+                        if (selectedLine.compareTo("") != 0){
+                            System.out.println("Reservation removed.");
+                            deleteline(RESERVATIONS_LIST, selectedLine);
+                        } else {
+                            System.out.println("\nThere are no available reservations.");
+                        }
                         taskDone = true;
                         validOption = false;
                         break;
                     case 6:
+                        // prints the list of reservations and gets a selected reservation
+                        selectedLine = selectreservation(sc, RESERVATIONS_LIST);
+                        // writes to the reservation file the replacement if a reservation is able to be selected
+                        if (selectedLine.compareTo("") != 0){
+                            newLine = createreservation(sc, ROOMS_LIST, RESERVATIONS_LIST, employeeName);
+                            if (newLine.compareTo("") != 0){
+                                System.out.println("Reservation changed:");
+                                System.out.println(newLine);
+                                replaceline(RESERVATIONS_LIST, selectedLine, newLine);
+                            } else {
+                                System.out.println("\nThere are no available changes.");
+                            }
+                        } else {
+                            System.out.println("\nThere are no available reservations.");
+                        }
                         taskDone = true;
                         validOption = false;
                         break;
@@ -167,7 +204,7 @@ public class HotelOS {
     }
 
     /*====================================================================
-    |  String getname(Scanner sc)                                        |
+    |  String getname (Scanner sc)                                       |
     |--------------------------------------------------------------------|
     |  Scanner sc - The System.in scanner object                         |
     |--------------------------------------------------------------------|
@@ -222,8 +259,23 @@ public class HotelOS {
         return nameString;
     }
 
-
+    /*====================================================================
+    |  String getdate (Scanner sc)                                       |
+    |--------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                         |
+    |--------------------------------------------------------------------|
+    |  returns String - A valid date                                     |
+    |--------------------------------------------------------------------|
+    |  This method prompts and gets a valid date from the user           |
+    ====================================================================*/
     public static String getdate (Scanner sc){
+        final int MIN_DAY = 1;
+        final int MIN_MONTH = 1;
+        final int MIN_YEAR = 2024;
+        final int MAX_DAY = 31;
+        final int MAX_MONTH = 12;
+        final int MAX_YEAR = 2054;
+
         String[] dateCheckArray;
         String date = null;
         boolean validDate = false;
@@ -236,16 +288,20 @@ public class HotelOS {
             if (dateCheckArray.length == 3){
                 // checks that the entered date is valid
                 try {
-                    if (Integer.parseInt(dateCheckArray[0]) >= 1 && Integer.parseInt(dateCheckArray[0]) <= 31 && 
-                    Integer.parseInt(dateCheckArray[1]) >= 1 && Integer.parseInt(dateCheckArray[1]) <= 12 && 
-                    Integer.parseInt(dateCheckArray[2]) >= 2024 && Integer.parseInt(dateCheckArray[2]) <= 2054){
-                            validDate = true;
+                    if (Integer.parseInt(dateCheckArray[0]) >= MIN_DAY && Integer.parseInt(dateCheckArray[0]) <= MAX_DAY && 
+                    Integer.parseInt(dateCheckArray[1]) >= MIN_MONTH && Integer.parseInt(dateCheckArray[1]) <= MAX_MONTH && 
+                    Integer.parseInt(dateCheckArray[2]) >= MIN_YEAR && Integer.parseInt(dateCheckArray[2]) <= MAX_YEAR){
+                        validDate = true;
+                    } else {
+                        System.out.print("Invalid date, please retry: ");
                     }
                 } catch (NumberFormatException e){
                     System.out.print("Invalid date, please retry: ");
                 }
+            } else {
+                System.out.print("Invalid date, please retry: ");
             }
-            if (validDate == false) System.out.print("Invalid date, please retry: ");
+            
         }
 
         return date;
@@ -271,7 +327,7 @@ public class HotelOS {
             System.out.println("An error occured! Please call a support technician. " + e.getMessage());
         }
         
-        // assigns the data from each line into each index in the file storing array
+        // assigns the data from each line into each index in the file array
         if (arraySizeCounter != 0){
             fileArray = new String[arraySizeCounter];
             try {
@@ -304,7 +360,7 @@ public class HotelOS {
 
         if (fileArray[0].compareTo("") != 0){
             for (int i = 0; i < fileArray.length; i++){
-                // initializes the string with parsed data from each element of the file storing array
+                // initializes the string with parsed data from each element of the file array
                 parsedArray =  fileArray[i].split("\\|", 0);
                 // compares the parsed array with the data to match and increments a counter if a match is detected
                 for (int j = 0; j < parsedArray.length; j++){
@@ -319,7 +375,7 @@ public class HotelOS {
                 arraySizeCounter = 0;
 
                 for (int i = 0; i < fileArray.length; i++){
-                    // initializes the string with parsed data from each element of the file storing array
+                    // initializes the string with parsed data from each element of the file array
                     parsedArray =  fileArray[i].split("\\|", 0);
                     // compares the parsed array with the data to match and increments a counter if a match is detected
                     for (int j = 0; j < parsedArray.length; j++){
@@ -348,7 +404,7 @@ public class HotelOS {
         int arraySizeCounter = 0;
         boolean validMatch = false;
         
-        // runs only if the given file storing array is not empty
+        // runs only if the given file array is not empty
         if (fileArray[0].compareTo("") != 0){
             System.out.println("fileArray.length: " + fileArray.length);
             for (int i = 0; i < fileArray.length; i++){
@@ -403,46 +459,39 @@ public class HotelOS {
     }
     */
     
-    public static String[] getdateavailablerooms (String[] fileArray, String[] matchArray){
-        String[] dateAvailableRoomArray;
-        int arraySizeCounter = 0;
 
-        for (int i = 0; i < fileArray.length; i++){
-            for (int j = 0; j < matchArray.length; j++){
-                // compares total rooms to the section of the reservation string that is the room
-                if (fileArray[i].compareTo(matchArray[j].split("\\|", 0)[2]) != 0){
-                    arraySizeCounter++;
-                }
-            }
-        }
+    public static void writetofile (String fileName, String newLine){
+        final boolean APPEND_STATE = true;
         
-        if (arraySizeCounter != 0){
-            dateAvailableRoomArray = new String[arraySizeCounter];
-            arraySizeCounter = 0;
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, APPEND_STATE));
+
+            out.write(newLine);
+            out.newLine();
+
+            out.close();
+        } catch (IOException e){
+            System.out.println("An error occured! Please call a support technician. " + e.getMessage());
+        }
+    }
+
+
+    public static void overwritefile (String fileName, String[] fileArray){
+        final boolean APPEND_STATE = false;
+        
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, APPEND_STATE));
 
             for (int i = 0; i < fileArray.length; i++){
-                for (int j = 0; j < matchArray.length; j++){
-                    if (fileArray[i].compareTo(matchArray[j].split("\\|", 0)[2]) != 0){
-                        dateAvailableRoomArray[arraySizeCounter] = fileArray[i];
-
-                        System.out.println("Available: " + dateAvailableRoomArray[arraySizeCounter]);
-
-                        arraySizeCounter++;
-                    }
-                }
+                out.write(fileArray[i]);
+                out.newLine();
             }
-        } else {
-            dateAvailableRoomArray = new String[1];
-            dateAvailableRoomArray[0] = "";
+
+            out.close();
+        } catch (IOException e){
+            System.out.println("An error occured! Please call a support technician. " + e.getMessage());
         }
-
-        for (String i: dateAvailableRoomArray){
-            System.out.println(i);
-        }
-
-        return dateAvailableRoomArray;
-    }    
-
+    }
 
     /*============================================================================
     |  String employeelogin(Scanner sc, String EMPLOYEE_LIST, String ADMIN_ID)   |
@@ -542,5 +591,197 @@ public class HotelOS {
     }
 
 
+    public static String[] getdateavailablerooms (String[] fileArray, String[] matchArray){
+        String[] dateAvailableRoomArray;
+        int arraySizeCounter = 0;
 
+        for (int i = 0; i < fileArray.length; i++){
+            for (int j = 0; j < matchArray.length; j++){
+                // compares total rooms to the section of the reservation string that is the room
+                if (fileArray[i].compareTo(matchArray[j].split("\\|", 0)[2]) != 0){
+                    arraySizeCounter++;
+                }
+            }
+        }
+        
+        if (arraySizeCounter != 0){
+            dateAvailableRoomArray = new String[arraySizeCounter];
+            arraySizeCounter = 0;
+
+            for (int i = 0; i < fileArray.length; i++){
+                for (int j = 0; j < matchArray.length; j++){
+                    if (fileArray[i].compareTo(matchArray[j].split("\\|", 0)[2]) != 0){
+                        dateAvailableRoomArray[arraySizeCounter] = fileArray[i];
+                        arraySizeCounter++;
+                    }
+                }
+            }
+        } else {
+            dateAvailableRoomArray = new String[1];
+            dateAvailableRoomArray[0] = "";
+        }
+
+        return dateAvailableRoomArray;
+    }
+
+    
+    public static String createreservation (Scanner sc, String ROOMS_LIST, String RESERVATIONS_LIST, String employeename){
+        String[] roomsListArray;
+        String[] reservationListArray;
+        String[] dateAvailableRoomsArray;
+        String reservationString = "";
+        String guestName;
+        String date;
+        int roomChoice;
+        boolean validRoomChosen = false;
+
+        // gets a valid name and date
+        guestName = getname(sc);
+        date = getdate(sc);
+
+        // gets the list of all existing rooms
+        roomsListArray = getfile(ROOMS_LIST);
+                        
+        // gets the list of reserved rooms for a given date
+        reservationListArray = getmatch(getfile(RESERVATIONS_LIST), date);
+
+        // if there are no rooms in the hotel 
+        if (roomsListArray[0].compareTo("") == 0){
+            System.out.println("\nThere are no available rooms.\n");
+            reservationString = "";
+        // if there are no reserved rooms
+        } else {
+            // if there are no reservations on a given date, the date available rooms array is the rooms list array 
+            if (reservationListArray[0].compareTo("") == 0){
+                System.out.println("\nAll rooms are available: ");
+                dateAvailableRoomsArray = roomsListArray;
+            // otherwise if there are reservations, get the available rooms on the given date
+            } else {
+                System.out.println("\nThe available rooms are: ");
+                dateAvailableRoomsArray = getdateavailablerooms(roomsListArray, reservationListArray);
+            }
+
+            // if some rooms are available
+            if (dateAvailableRoomsArray[0].compareTo("") != 0){
+                for (int i = 0; i < dateAvailableRoomsArray.length; i++){
+                    System.out.printf("%d) Room %s%n", i+1, dateAvailableRoomsArray[i]);
+                }
+
+                // gets a valid room option
+                System.out.print("Enter a numeric option from the list: ");
+                while (validRoomChosen == false){
+                    try {
+                        roomChoice = Integer.parseInt(sc.nextLine());
+                        if (roomChoice >= 1 && roomChoice <= dateAvailableRoomsArray.length){
+                            // concatonizes the reservation data
+                            reservationString = guestName + "|" + date + "|" + dateAvailableRoomsArray[roomChoice-1] + "|" + employeename;
+                            validRoomChosen = true;
+                        } else {
+                            System.out.print("Invalid option, please retry: ");
+                        }
+                    } catch (NumberFormatException e){
+                        System.out.print("Invalid option, please retry: ");
+                    }
+                }              
+
+            // if all rooms are unavailable
+            } else {
+                System.out.println("\nThere are no available rooms.");
+                reservationString = "";
+            }
+        }
+
+        return reservationString;
+    }
+
+    public static String selectreservation (Scanner sc, String fileName){
+        String[] reservationListArray;
+        String selectedReservation = "";
+        int roomChoice;
+        boolean validReservationChosen = false;
+
+        reservationListArray = getfile(fileName);
+        if (reservationListArray[0].compareTo("") == 0){
+            System.out.println("\nThere are no reservations.");
+            selectedReservation = "";
+        } else {
+            System.out.println("\nReservations:");
+            System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
+            for (int i = 0; i < reservationListArray.length; i++){
+                System.out.printf("%d) Room %s%n", i+1, reservationListArray[i]);
+            }
+
+            // gets a valid room option
+            System.out.print("Enter a numeric option from the list: ");
+            while (validReservationChosen == false){
+                try {
+                    roomChoice = Integer.parseInt(sc.nextLine());
+                    if (roomChoice >= 1 && roomChoice <= reservationListArray.length){
+                        // concatonizes the reservation data
+                        selectedReservation = reservationListArray[roomChoice-1];
+                        validReservationChosen = true;
+                    } else {
+                        System.out.print("Invalid option, please retry: ");
+                    }
+                } catch (NumberFormatException e){
+                    System.out.print("Invalid option, please retry: ");
+                }
+            }        
+        }
+
+        return selectedReservation;
+    }
+
+
+    public static void deleteline (String fileName, String matchLine){
+        String[] fileArray;
+        String[] newFileArray;
+        int arraySizeCounter = 0;
+
+        // gets the contents of the file prior to deletion
+        fileArray = getfile(fileName);
+        // if the file array is not empty
+        if (fileArray[0].compareTo("") != 0){
+            // reads through the file array and increments a counter if a match is not detected
+            for (int i = 0; i < fileArray.length; i++){
+                if (fileArray[i].compareTo(matchLine) != 0){
+                    arraySizeCounter++;
+                }
+            }
+
+            if (arraySizeCounter != 0){
+                // initializes the new file array and resets the counter
+                newFileArray = new String[arraySizeCounter];
+                arraySizeCounter = 0;
+
+                // reads through the file array once more adds to the new file array the element in the file array if a match is not detected
+                for (int i = 0; i < fileArray.length; i++){
+                    if (fileArray[i].compareTo(matchLine) != 0){
+                        newFileArray[arraySizeCounter] = fileArray[i];
+                        arraySizeCounter++;
+                    }
+                }
+
+                overwritefile(fileName, newFileArray);
+            }
+        }
+    }
+
+
+    public static void replaceline (String fileName, String matchLine, String newLine){
+        String[] fileArray;
+
+        fileArray = getfile(fileName);
+        if (fileArray[0].compareTo("") != 0){
+            for (int i = 0; i < fileArray.length; i++){
+                if (fileArray[i].compareTo(matchLine) == 0){
+                    fileArray[i] = newLine;
+                }
+            }
+            overwritefile(fileName, fileArray);
+        } else {
+            fileArray[0] = newLine;
+            overwritefile(fileName, fileArray);
+        }
+    }
 }
