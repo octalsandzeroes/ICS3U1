@@ -33,6 +33,7 @@ public class HotelOS {
         String[] fileArray;
         String[] matchArray;
         String[] dateAvailableRoomsArray;
+        String[] loginStringArray;
         String loginString;
         String employeeName;
         String selectedLine;
@@ -174,11 +175,28 @@ public class HotelOS {
                         break;
                     // 7) Change PIN number
                     case 7:
+                        // gets all employees
                         fileArray = getfile(EMPLOYEE_LIST);
-                        
 
+                        // gets the login string without the employee type
+                        loginStringArray = loginString.split("\\|", 2);
 
-                        loginString = changepin(sc, EMPLOYEE_LIST, loginString);
+                        if (fileArray[0].compareTo("") != 0){
+                            for (int i = 0; i < fileArray.length; i++){
+                                if (fileArray[i].compareTo(loginStringArray[1]) == 0){
+                                    loginStringArray[1] = changepin(sc, EMPLOYEE_LIST, loginString);
+                                    fileArray[i] = loginStringArray[1];
+                                    loginString = loginStringArray[0] + "|" + loginStringArray[1];
+                                }
+                            }
+                            overwritefile(EMPLOYEE_LIST, fileArray);
+                        } else {
+                            // gets the new login string with the new pin
+                            loginStringArray[1] = changepin(sc, EMPLOYEE_LIST, loginString);
+                            writetofile(EMPLOYEE_LIST, loginStringArray[1]);
+                            loginString = loginStringArray[0] + "|" + loginStringArray[1];
+                        }
+
                         taskDone = true;
                         validOption = false;
                         break;
@@ -822,6 +840,7 @@ public class HotelOS {
             // assigns the new pin to the index in the array corresponding to a pin
             newloginStringArray[1] = newPin;
             newLoginString = newloginStringArray[0] + "|" + newloginStringArray[1] + "|" + newloginStringArray[2];
+            System.out.println("Success, your new pin is " + newLoginString);
         } else {
             newLoginString = loginString;
         }
