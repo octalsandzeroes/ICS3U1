@@ -1,6 +1,5 @@
 import java.util.*;
 import java.io.*;
-import java.nio.BufferOverflowException;
 
 public class HotelOS {
     public static void main(String[] args){
@@ -67,6 +66,7 @@ public class HotelOS {
                 }
 
                 switch (userInput){
+                    // 1) List the available rooms for a given date
                     case 1:
                         // gets the list of all existing rooms
                         fileArray = getfile(ROOMS_LIST);
@@ -99,6 +99,7 @@ public class HotelOS {
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 2) List all the reservations for a given date
                     case 2:
                         // gets the reservations matching a given date
                         matchArray = getmatch(getfile(RESERVATIONS_LIST), getdate(sc));
@@ -110,6 +111,7 @@ public class HotelOS {
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 3) List all the reservations made under a certain name
                     case 3:
                         // gets the reservations matching a given name
                         matchArray = getmatch(getfile(RESERVATIONS_LIST), getname(sc));
@@ -121,6 +123,7 @@ public class HotelOS {
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 4) Make a reservation for a room
                     case 4:
                         // gets the details for a new reservations and concatonizes them into a string
                         newLine = createreservation(sc, ROOMS_LIST, RESERVATIONS_LIST, employeeName);
@@ -133,10 +136,11 @@ public class HotelOS {
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 5) Cancel a reservation for a room
                     case 5:
                         // prints the list of reservations and gets a selected reservation
                         selectedLine = selectreservation(sc, RESERVATIONS_LIST);
-                        // writes to the reservation file the replacement if a reservation is able to be selected
+                        // overwrites the file without the selected reservation if a reservation is able to be selected
                         if (selectedLine.compareTo("") != 0){
                             System.out.println("Reservation removed.");
                             deleteline(RESERVATIONS_LIST, selectedLine);
@@ -146,18 +150,21 @@ public class HotelOS {
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 6) Change the details on a reservation
                     case 6:
                         // prints the list of reservations and gets a selected reservation
                         selectedLine = selectreservation(sc, RESERVATIONS_LIST);
                         // writes to the reservation file the replacement if a reservation is able to be selected
                         if (selectedLine.compareTo("") != 0){
+                            // removes the old reservation entry
+                            deleteline(RESERVATIONS_LIST, selectedLine);
+                            // gets the new details to edit the reservation and concatonizes them into a string
                             newLine = createreservation(sc, ROOMS_LIST, RESERVATIONS_LIST, employeeName);
+                            // writes to the reservation file if a reservation is available
                             if (newLine.compareTo("") != 0){
-                                System.out.println("Reservation changed:");
+                                System.out.println("\nReservation changed:");
                                 System.out.println(newLine);
-                                replaceline(RESERVATIONS_LIST, selectedLine, newLine);
-                            } else {
-                                System.out.println("\nThere are no available changes.");
+                                writetofile(RESERVATIONS_LIST, newLine);
                             }
                         } else {
                             System.out.println("\nThere are no available reservations.");
@@ -165,26 +172,37 @@ public class HotelOS {
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 7) Change PIN number
                     case 7:
+                        fileArray = getfile(EMPLOYEE_LIST);
+                        
+
+
+                        loginString = changepin(sc, EMPLOYEE_LIST, loginString);
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 8) Add a hotel room
                     case 8:
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 9) Delete a hotel room
                     case 9:
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 10) Add an employee
                     case 10:
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 11) Delete an employee
                     case 11:
                         taskDone = true;
                         validOption = false;
                         break;
+                    // 0) Log out
                     case 0:
                         loginType = 0;
                         taskDone = true;
@@ -268,7 +286,7 @@ public class HotelOS {
     |--------------------------------------------------------------------|
     |  This method prompts and gets a valid date from the user           |
     ====================================================================*/
-    public static String getdate (Scanner sc){
+    public static String getdate(Scanner sc){
         final int MIN_DAY = 1;
         final int MIN_MONTH = 1;
         final int MIN_YEAR = 2024;
@@ -308,7 +326,7 @@ public class HotelOS {
     }
 
 
-    public static String[] getfile (String fileName){
+    public static String[] getfile(String fileName){
         String[] fileArray;
         String lineIn;
         int arraySizeCounter = 0;
@@ -353,7 +371,7 @@ public class HotelOS {
     }
 
 
-    public static String[] getmatch (String[] fileArray, String match){
+    public static String[] getmatch(String[] fileArray, String match){
         String[] matchArray;
         String[] parsedArray;
         int arraySizeCounter = 0;
@@ -398,7 +416,7 @@ public class HotelOS {
     }
 
     /*
-    public static String[] getnotmatch (String[] fileArray, String match){
+    public static String[] getnotmatch(String[] fileArray, String match){
         String[] notMatchArray;
         String[] parsedArray;
         int arraySizeCounter = 0;
@@ -460,7 +478,7 @@ public class HotelOS {
     */
     
 
-    public static void writetofile (String fileName, String newLine){
+    public static void writetofile(String fileName, String newLine){
         final boolean APPEND_STATE = true;
         
         try {
@@ -476,7 +494,7 @@ public class HotelOS {
     }
 
 
-    public static void overwritefile (String fileName, String[] fileArray){
+    public static void overwritefile(String fileName, String[] fileArray){
         final boolean APPEND_STATE = false;
         
         try {
@@ -490,6 +508,41 @@ public class HotelOS {
             out.close();
         } catch (IOException e){
             System.out.println("An error occured! Please call a support technician. " + e.getMessage());
+        }
+    }
+    
+
+    public static void deleteline(String fileName, String matchLine){
+        String[] fileArray;
+        String[] newFileArray;
+        int arraySizeCounter = 0;
+
+        // gets the contents of the file prior to deletion
+        fileArray = getfile(fileName);
+        // if the file array is not empty
+        if (fileArray[0].compareTo("") != 0){
+            // reads through the file array and increments a counter if a match is not detected
+            for (int i = 0; i < fileArray.length; i++){
+                if (fileArray[i].compareTo(matchLine) != 0){
+                    arraySizeCounter++;
+                }
+            }
+
+            if (arraySizeCounter != 0){
+                // initializes the new file array and resets the counter
+                newFileArray = new String[arraySizeCounter];
+                arraySizeCounter = 0;
+
+                // reads through the file array once more adds to the new file array the element in the file array if a match is not detected
+                for (int i = 0; i < fileArray.length; i++){
+                    if (fileArray[i].compareTo(matchLine) != 0){
+                        newFileArray[arraySizeCounter] = fileArray[i];
+                        arraySizeCounter++;
+                    }
+                }
+
+                overwritefile(fileName, newFileArray);
+            }
         }
     }
 
@@ -507,11 +560,11 @@ public class HotelOS {
     |  This method prompts for a employee login until it is successful           |
     ============================================================================*/
     public static String employeelogin(Scanner sc, String EMPLOYEE_LIST, String ADMIN_ID){
-        final String exitCode = "0";
+        final String EXIT_CODE = "0";
         
-        int intCheck;
         String lineIn;
         String loginString = null, employeeID = null, pin = null;
+        int intCheck;
         boolean employeeIDCheck = false, pinCheck = false;
 
         while (employeeIDCheck == false && pinCheck == false){
@@ -545,7 +598,7 @@ public class HotelOS {
                 if (employeeIDCheck == false) System.out.println("The employee ID you entered does not exist.");
             
                 // gets a pin and validates it
-                System.out.print("Enter a 4 digit pin or enter \"0\" to go back: ");
+                System.out.print("Enter a 4-digit pin or enter \"0\" to go abort: ");
                 while (employeeIDCheck == true && pinCheck == false){
                     // gets a legal employee ID
                     do {
@@ -555,7 +608,7 @@ public class HotelOS {
                             intCheck = Integer.parseInt(pin);
 
                             // checks if the pin is the exit code or if it is invalid
-                            if (pin.compareTo(exitCode) == 0){
+                            if (pin.compareTo(EXIT_CODE) == 0){
                                 employeeIDCheck = false;
                             } else if (pin.length() != 4){
                                 System.out.print("Invalid pin, please retry: ");
@@ -565,7 +618,7 @@ public class HotelOS {
                             System.out.print("Invalid pin, please retry: ");
                             pin = null;
                         }
-                    } while (pin == null || pin.length() != 4 && pin.compareTo(exitCode) != 0);
+                    } while (pin == null || pin.length() != 4 && pin.compareTo(EXIT_CODE) != 0);
                     
                     if (pin.compareTo(lineIn.split("\\|", 3)[1]) == 0){
                         pinCheck = true;
@@ -591,7 +644,7 @@ public class HotelOS {
     }
 
 
-    public static String[] getdateavailablerooms (String[] fileArray, String[] matchArray){
+    public static String[] getdateavailablerooms(String[] fileArray, String[] matchArray){
         String[] dateAvailableRoomArray;
         int arraySizeCounter = 0;
 
@@ -625,7 +678,7 @@ public class HotelOS {
     }
 
     
-    public static String createreservation (Scanner sc, String ROOMS_LIST, String RESERVATIONS_LIST, String employeename){
+    public static String createreservation(Scanner sc, String ROOMS_LIST, String RESERVATIONS_LIST, String employeename){
         String[] roomsListArray;
         String[] reservationListArray;
         String[] dateAvailableRoomsArray;
@@ -694,7 +747,7 @@ public class HotelOS {
         return reservationString;
     }
 
-    public static String selectreservation (Scanner sc, String fileName){
+    public static String selectreservation(Scanner sc, String fileName){
         String[] reservationListArray;
         String selectedReservation = "";
         int roomChoice;
@@ -708,7 +761,7 @@ public class HotelOS {
             System.out.println("\nReservations:");
             System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
             for (int i = 0; i < reservationListArray.length; i++){
-                System.out.printf("%d) Room %s%n", i+1, reservationListArray[i]);
+                System.out.printf("%d) %s%n", i+1, reservationListArray[i]);
             }
 
             // gets a valid room option
@@ -732,56 +785,47 @@ public class HotelOS {
         return selectedReservation;
     }
 
+    public static String changepin(Scanner sc, String EMPLOYEE_LIST, String loginString){
+        final String EXIT_CODE = "0";
 
-    public static void deleteline (String fileName, String matchLine){
-        String[] fileArray;
-        String[] newFileArray;
-        int arraySizeCounter = 0;
+        String[] newloginStringArray;
+        String newLoginString;
+        String newPin;
+        int intCheck;
+        boolean abortCheck = false;
 
-        // gets the contents of the file prior to deletion
-        fileArray = getfile(fileName);
-        // if the file array is not empty
-        if (fileArray[0].compareTo("") != 0){
-            // reads through the file array and increments a counter if a match is not detected
-            for (int i = 0; i < fileArray.length; i++){
-                if (fileArray[i].compareTo(matchLine) != 0){
-                    arraySizeCounter++;
+        newLoginString = loginString.split("\\|", 2)[1]; // assigns the part of the login string without the account type
+        newloginStringArray = newLoginString.split("\\|", 0);
+
+        System.out.print("Enter a new 4-digit pin or enter \"0\" to go abort: ");
+        do {
+            // gets a numerical pin
+            try{
+                newPin = sc.nextLine();
+                intCheck = Integer.parseInt(newPin);
+
+                // checks if the pin is the exit code and if so aborts changing the pin
+                if (newPin.compareTo(EXIT_CODE) == 0){
+                    abortCheck = true;
+                    System.out.println("Pin change aborted.");
+                } else if (newPin.length() != 4){
+                    System.out.print("Invalid pin, please retry: ");
+                    newPin = null;
                 }
+            } catch (NumberFormatException e){
+                System.out.print("Invalid pin, please retry: ");
+                newPin = null;
             }
+        } while (newPin == null || newPin.length() != 4 && newPin.compareTo(EXIT_CODE) != 0);
 
-            if (arraySizeCounter != 0){
-                // initializes the new file array and resets the counter
-                newFileArray = new String[arraySizeCounter];
-                arraySizeCounter = 0;
-
-                // reads through the file array once more adds to the new file array the element in the file array if a match is not detected
-                for (int i = 0; i < fileArray.length; i++){
-                    if (fileArray[i].compareTo(matchLine) != 0){
-                        newFileArray[arraySizeCounter] = fileArray[i];
-                        arraySizeCounter++;
-                    }
-                }
-
-                overwritefile(fileName, newFileArray);
-            }
-        }
-    }
-
-
-    public static void replaceline (String fileName, String matchLine, String newLine){
-        String[] fileArray;
-
-        fileArray = getfile(fileName);
-        if (fileArray[0].compareTo("") != 0){
-            for (int i = 0; i < fileArray.length; i++){
-                if (fileArray[i].compareTo(matchLine) == 0){
-                    fileArray[i] = newLine;
-                }
-            }
-            overwritefile(fileName, fileArray);
+        if (abortCheck == false){
+            // assigns the new pin to the index in the array corresponding to a pin
+            newloginStringArray[1] = newPin;
+            newLoginString = newloginStringArray[0] + "|" + newloginStringArray[1] + "|" + newloginStringArray[2];
         } else {
-            fileArray[0] = newLine;
-            overwritefile(fileName, fileArray);
+            newLoginString = loginString;
         }
+
+        return newLoginString;
     }
 }
