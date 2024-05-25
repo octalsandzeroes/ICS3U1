@@ -184,19 +184,24 @@ public class HotelOS {
                         if (fileArray[0].compareTo("") != 0){
                             for (int i = 0; i < fileArray.length; i++){
                                 if (fileArray[i].compareTo(loginStringArray[1]) == 0){
+                                    // gets the new login string with the new pin
                                     loginStringArray[1] = changepin(sc, EMPLOYEE_LIST, loginString);
+                                    // saves the new login string to the login string array
                                     fileArray[i] = loginStringArray[1];
+                                    // assigns the login string with the updated information
                                     loginString = loginStringArray[0] + "|" + loginStringArray[1];
                                 }
                             }
+                            // writes to the employee list file the updated info
                             overwritefile(EMPLOYEE_LIST, fileArray);
                         } else {
                             // gets the new login string with the new pin
                             loginStringArray[1] = changepin(sc, EMPLOYEE_LIST, loginString);
+                            // writes to the employee list file the updated info
                             writetofile(EMPLOYEE_LIST, loginStringArray[1]);
+                            // assigns the login string with the updated information
                             loginString = loginStringArray[0] + "|" + loginStringArray[1];
                         }
-
                         taskDone = true;
                         validOption = false;
                         break;
@@ -235,6 +240,172 @@ public class HotelOS {
 
             while (loginType == 2){
                 System.out.println(GENERAL_OPTIONS);
+
+                if (taskDone == true){
+                    System.out.println(ADMIN_OPTIONS);
+                    System.out.print("Enter a numeric option: ");
+                    taskDone = false;
+                }
+
+                while (validOption == false){
+                    try {
+                        userInput = Integer.parseInt(sc.nextLine());
+                        validOption = true;
+                    } catch (NumberFormatException e){
+                        System.out.print("Invalid option, please retry: ");
+                    }
+                }
+
+                switch (userInput){
+                    // 1) List the available rooms for a given date
+                    case 1:
+                        // gets the list of all existing rooms
+                        fileArray = getfile(ROOMS_LIST);
+                        
+                        // gets the list of reserved rooms for a given date
+                        matchArray = getmatch(getfile(RESERVATIONS_LIST), getdate(sc));
+
+                        // if there are no rooms in the hotel 
+                        if (fileArray[0].compareTo("") == 0){
+                            System.out.println("\nThere are no available rooms.\n");
+                        // if there are no reserved rooms
+                        } else if (matchArray[0].compareTo("") == 0){
+                            System.out.println("\nAll rooms are available: ");
+                            for (int i = 0; i < fileArray.length; i++){
+                                System.out.printf("%d) Room %s%n", i+1, fileArray[i]);
+                            }
+                        } else {
+                            dateAvailableRoomsArray = getdateavailablerooms(fileArray, matchArray);
+                            // if some rooms are available
+                            if (dateAvailableRoomsArray[0].compareTo("") != 0){
+                                System.out.println("\nThe available rooms are: ");
+                                for (int i = 0; i < dateAvailableRoomsArray.length; i++){
+                                    System.out.printf("%d) Room %s%n", i+1, dateAvailableRoomsArray[i]);
+                                }
+                            // if all rooms are unavailable
+                            } else {
+                                System.out.println("\nThere are no available rooms.");
+                            }
+                        }  
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 2) List all the reservations for a given date
+                    case 2:
+                        // gets the reservations matching a given date
+                        matchArray = getmatch(getfile(RESERVATIONS_LIST), getdate(sc));
+                        System.out.println("\nThe reservations for that date are as follows: ");
+                        System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
+                        for (String i: matchArray){
+                            System.out.println(i);
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 3) List all the reservations made under a certain name
+                    case 3:
+                        // gets the reservations matching a given name
+                        matchArray = getmatch(getfile(RESERVATIONS_LIST), getname(sc));
+                        System.out.println("\nThe reservations for that name are as follows: ");
+                        System.out.println("Guest Name|Date Booked|Room Number|Employee Name");
+                        for (String i: matchArray){
+                            System.out.println(i);
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 4) Make a reservation for a room
+                    case 4:
+                        // gets the details for a new reservations and concatonizes them into a string
+                        newLine = createreservation(sc, ROOMS_LIST, RESERVATIONS_LIST, employeeName);
+                        // writes to the reservation file if a reservation is available
+                        if (newLine.compareTo("") != 0){
+                            System.out.println("\nReservation created:");
+                            System.out.println(newLine);
+                            writetofile(RESERVATIONS_LIST, newLine);
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 5) Cancel a reservation for a room
+                    case 5:
+                        // prints the list of reservations and gets a selected reservation
+                        selectedLine = selectreservation(sc, RESERVATIONS_LIST);
+                        // overwrites the file without the selected reservation if a reservation is able to be selected
+                        if (selectedLine.compareTo("") != 0){
+                            System.out.println("Reservation removed.");
+                            deleteline(RESERVATIONS_LIST, selectedLine);
+                        } else {
+                            System.out.println("\nThere are no available reservations.");
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 6) Change the details on a reservation
+                    case 6:
+                        // prints the list of reservations and gets a selected reservation
+                        selectedLine = selectreservation(sc, RESERVATIONS_LIST);
+                        // writes to the reservation file the replacement if a reservation is able to be selected
+                        if (selectedLine.compareTo("") != 0){
+                            // removes the old reservation entry
+                            deleteline(RESERVATIONS_LIST, selectedLine);
+                            // gets the new details to edit the reservation and concatonizes them into a string
+                            newLine = createreservation(sc, ROOMS_LIST, RESERVATIONS_LIST, employeeName);
+                            // writes to the reservation file if a reservation is available
+                            if (newLine.compareTo("") != 0){
+                                System.out.println("\nReservation changed:");
+                                System.out.println(newLine);
+                                writetofile(RESERVATIONS_LIST, newLine);
+                            }
+                        } else {
+                            System.out.println("\nThere are no available reservations.");
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 7) Change PIN number
+                    case 7:
+                        // gets all employees
+                        fileArray = getfile(EMPLOYEE_LIST);
+
+                        // gets the login string without the employee type
+                        loginStringArray = loginString.split("\\|", 2);
+
+                        if (fileArray[0].compareTo("") != 0){
+                            for (int i = 0; i < fileArray.length; i++){
+                                if (fileArray[i].compareTo(loginStringArray[1]) == 0){
+                                    // gets the new login string with the new pin
+                                    loginStringArray[1] = changepin(sc, EMPLOYEE_LIST, loginString);
+                                    // saves the new login string to the login string array
+                                    fileArray[i] = loginStringArray[1];
+                                    // assigns the login string with the updated information
+                                    loginString = loginStringArray[0] + "|" + loginStringArray[1];
+                                }
+                            }
+                            // writes to the employee list file the updated info
+                            overwritefile(EMPLOYEE_LIST, fileArray);
+                        } else {
+                            // gets the new login string with the new pin
+                            loginStringArray[1] = changepin(sc, EMPLOYEE_LIST, loginString);
+                            // writes to the employee list file the updated info
+                            writetofile(EMPLOYEE_LIST, loginStringArray[1]);
+                            // assigns the login string with the updated information
+                            loginString = loginStringArray[0] + "|" + loginStringArray[1];
+                        }
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    // 0) Log out
+                    case 0:
+                        loginType = 0;
+                        taskDone = true;
+                        validOption = false;
+                        break;
+                    default:
+                        System.out.print("Invalid option, please retry: ");
+                        validOption = false;
+                        break;
+                }
             }
         }
     }
