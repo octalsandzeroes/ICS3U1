@@ -514,7 +514,15 @@ public class HotelOS {
         return date;
     }
 
-
+    /*====================================================================
+    |  String getfile (String fileName)                                  |
+    |--------------------------------------------------------------------|
+    |  String fileName - The string with the name of the file to parse   |
+    |--------------------------------------------------------------------|
+    |  returns String[] - The contents of the file in an array of lines  |
+    |--------------------------------------------------------------------|
+    |  This method saves each line in a file to an array                 |
+    ====================================================================*/
     public static String[] getfile(String fileName){
         String[] fileArray;
         String lineIn;
@@ -559,7 +567,17 @@ public class HotelOS {
         return fileArray;
     }
 
-
+    /*====================================================================
+    |  getmatch(String[] fileArray, String match)                        |
+    |--------------------------------------------------------------------|
+    |  String[] fileArray - The array storing an entire file             |
+    |--------------------------------------------------------------------|
+    |  String match - The string to detect a match to                    |
+    |--------------------------------------------------------------------|
+    |  returns String[] - The array of matching elements                 |
+    |--------------------------------------------------------------------|
+    |  This method checks for matches and return an array of matches     |
+    ====================================================================*/
     public static String[] getmatch(String[] fileArray, String match){
         String[] matchArray;
         String[] parsedArray;
@@ -604,69 +622,17 @@ public class HotelOS {
         return matchArray;
     }
 
-    /*
-    public static String[] getnotmatch(String[] fileArray, String match){
-        String[] notMatchArray;
-        String[] parsedArray;
-        int arraySizeCounter = 0;
-        boolean validMatch = false;
-        
-        // runs only if the given file array is not empty
-        if (fileArray[0].compareTo("") != 0){
-            System.out.println("fileArray.length: " + fileArray.length);
-            for (int i = 0; i < fileArray.length; i++){
-                // initializes the string with parsed data from each element of the file storing array
-                parsedArray =  fileArray[i].split("\\|", 0);
-                // compares the parsed array with the data to match and increments a counter if a match is not detected
-
-                System.out.println("Source: " + fileArray[i] + " Compare To: " + match);
-
-                for (int j = 0; j < parsedArray.length; j++){
-                    System.out.println("Element Compare: " + parsedArray[j] + " To: " + match);
-                    if (parsedArray[j].compareTo(match) == 0){
-                        validMatch = true;
-                    }
-                }
-                if (validMatch == false){
-                    arraySizeCounter++;
-                }
-                System.out.println("Num Not Matches: " + arraySizeCounter);
-                validMatch = false;
-            }
-
-            if (arraySizeCounter != 0){
-                notMatchArray = new String[arraySizeCounter];
-                arraySizeCounter = 0;
-
-                for (int i = 0; i < fileArray.length; i++){
-                    // initializes the string with parsed data from each element of the file storing array
-                    parsedArray =  fileArray[i].split("\\|", 0);
-                    // compares the parsed array with the data to match and saves the data if no match is detected
-                    for (int j = 0; j < parsedArray.length; j++){
-                        if (parsedArray[j].compareTo(match) == 0){
-                            validMatch = true;
-                        }
-                    }
-                    if (validMatch == false){
-                        notMatchArray[arraySizeCounter] = fileArray[i];
-                        arraySizeCounter++;
-                    }
-                    validMatch = false;
-                }
-            } else {
-                notMatchArray = new String[1];
-                notMatchArray[0] = "";
-            }
-        } else {
-            notMatchArray = new String[1];
-            notMatchArray[0] = "";
-        }
-
-        return notMatchArray;
-    }
-    */
-    
-
+    /*====================================================================
+    |  writetofile(String fileName, String newLine)                      |
+    |--------------------------------------------------------------------|
+    |  String fileName - The name of the file to write to                |
+    |--------------------------------------------------------------------|
+    |  String newLine - The string to write                              |
+    |--------------------------------------------------------------------|
+    |  returns void                                                      |
+    |--------------------------------------------------------------------|
+    |  This method appends data to a file                                |
+    ====================================================================*/
     public static void writetofile(String fileName, String newLine){
         final boolean APPEND_STATE = true;
         
@@ -682,7 +648,17 @@ public class HotelOS {
         }
     }
 
-
+    /*====================================================================
+    |  overwritefile(String fileName, String[] fileArray)                |
+    |--------------------------------------------------------------------|
+    |  String fileName - The name of the file to write to                |
+    |--------------------------------------------------------------------|
+    |  String[] fileArray - The string array to overwrite the file with  |
+    |--------------------------------------------------------------------|
+    |  returns void                                                      |
+    |--------------------------------------------------------------------|
+    |  This method overwrites data in file                               |
+    ====================================================================*/
     public static void overwritefile(String fileName, String[] fileArray){
         final boolean APPEND_STATE = false;
         
@@ -700,7 +676,17 @@ public class HotelOS {
         }
     }
     
-
+    /*====================================================================
+    |  deleteline(String fileName, String matchLine)                     |
+    |--------------------------------------------------------------------|
+    |  String fileName - The name of the file to write to                |
+    |--------------------------------------------------------------------|
+    |  String matchLine - The string to match                            |
+    |--------------------------------------------------------------------|
+    |  returns void                                                      |
+    |--------------------------------------------------------------------|
+    |  This method deletes a line from a file                            |
+    ====================================================================*/
     public static void deleteline(String fileName, String matchLine){
         String[] fileArray;
         String[] newFileArray;
@@ -832,7 +818,17 @@ public class HotelOS {
         return loginString;
     }
 
-
+    /*====================================================================
+    |  getdateavailablerooms(String[] fileArray, String[] matchArray)    |
+    |--------------------------------------------------------------------|
+    |  String[] fileArray - The array storing an entire file             |
+    |--------------------------------------------------------------------|
+    |  String[] matchArray - The array storing an strings to match       |
+    |--------------------------------------------------------------------|
+    |  returns String[] - The array of rooms available on a given date   |
+    |--------------------------------------------------------------------|
+    |  This method finds rooms that are available on a given date        |
+    ====================================================================*/
     public static String[] getdateavailablerooms(String[] fileArray, String[] matchArray){
         String[] dateAvailableRoomArray;
         int arraySizeCounter = 0;
@@ -866,7 +862,21 @@ public class HotelOS {
         return dateAvailableRoomArray;
     }
 
-    
+    /*=====================================================================================================
+    |  createreservation(Scanner sc, String ROOMS_LIST, String RESERVATIONS_LIST, String employeename)    |
+    |-----------------------------------------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                                                          |
+    |-----------------------------------------------------------------------------------------------------|
+    |  String ROOMS_LIST - The string of the name of the file listing all the rooms                       |
+    |-----------------------------------------------------------------------------------------------------|
+    |  String RESERVATIONS_LIST - The string of the name of the file listing all the reservations         |
+    |-----------------------------------------------------------------------------------------------------|
+    |  String employeeName - The name of the employee currently using the system                          |
+    |-----------------------------------------------------------------------------------------------------|
+    |  returns String - The reservation created                                                           |
+    |-----------------------------------------------------------------------------------------------------|
+    |  This method allows the user to create a new reservation for a guest                                |
+    =====================================================================================================*/
     public static String createreservation(Scanner sc, String ROOMS_LIST, String RESERVATIONS_LIST, String employeename){
         String[] roomsListArray;
         String[] reservationListArray;
@@ -936,6 +946,18 @@ public class HotelOS {
         return reservationString;
     }
 
+
+    /*================================================================================================
+    |  selectreservation(Scanner sc, String fileName)                                                |
+    |------------------------------------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                                                     |
+    |------------------------------------------------------------------------------------------------|
+    |  String fileName - The string of the name of the file listing all the reservations             |
+    |------------------------------------------------------------------------------------------------|
+    |  returns String - The selected reservation                                                     |
+    |------------------------------------------------------------------------------------------------|
+    |  This method allows the user to select a reservation from a list                               |
+    ================================================================================================*/
     public static String selectreservation(Scanner sc, String fileName){
         String[] reservationListArray;
         String selectedReservation = "";
@@ -974,6 +996,20 @@ public class HotelOS {
         return selectedReservation;
     }
 
+
+    /*================================================================================================
+    |  changepin(Scanner sc, String EMPLOYEE_LIST, String loginString)                               |
+    |------------------------------------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                                                     |
+    |------------------------------------------------------------------------------------------------|
+    |  String EMPLOYEE_LIST - The string of the name of the file listing all the employees           |
+    |------------------------------------------------------------------------------------------------|
+    |  String loginString - The string containing the details of the user currently logged in        |
+    |------------------------------------------------------------------------------------------------|
+    |  returns String - The new PIN                                                                  |
+    |------------------------------------------------------------------------------------------------|
+    |  This method allows the user to change their PIN                                               |
+    ================================================================================================*/
     public static String changepin(Scanner sc, String EMPLOYEE_LIST, String loginString){
         final String EXIT_CODE = "0";
 
