@@ -239,10 +239,8 @@ public class HotelOS {
             }
 
             while (loginType == 2){
-                System.out.println(GENERAL_OPTIONS);
-
                 if (taskDone == true){
-                    System.out.println(ADMIN_OPTIONS);
+                    System.out.println(GENERAL_OPTIONS);
                     System.out.print("Enter a numeric option: ");
                     taskDone = false;
                 }
