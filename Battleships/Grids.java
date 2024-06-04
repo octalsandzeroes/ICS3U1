@@ -51,8 +51,10 @@ public class Grids {
         int endColumn = Integer.parseInt(shipEndCoords.split(",", 2)[0]);
         boolean validPlace = true;
 
+        // CONFIRM END AND START DISCREPENCY OF 1
+
         // checks if the coordinates form a ship of proper length by xoring the length in the row or column sides
-        if ((Math.abs(endRow-startRow) == shipLength && Math.abs(endColumn-startColumn) == 0) ^ (Math.abs(endRow-startRow) == 0 && Math.abs(endColumn-startColumn) == shipLength)){
+        if ((Math.abs(endRow-startRow+1) == shipLength && Math.abs(endColumn-startColumn+1) == 0) ^ (Math.abs(endRow-startRow+1) == 0 && Math.abs(endColumn-startColumn+1) == shipLength)){
             // checks if there is any blockages in between
             for (int j = startRow; j <= endRow; j++) { // check this first for array index out of bounds exceptions, (start end index hunch)
                 for (int i = startColumn; i <= endColumn; i++) {
@@ -68,6 +70,8 @@ public class Grids {
         
         return validPlace;
     }
+
+    // REWRITE TO INITIALIZE SHIP OBJECT AND END-START COORD DISCREPENCY OF 1
 
     // updates (or places) ships of known valid details
     public void updateship(String shipStartCoords, String shipEndCoords, char[] shipArray){
