@@ -8,9 +8,9 @@ public class Grids {
 
     public Grids(int gridSize){
         // initializes the ships and shots grids
+        this.gridSize = gridSize;
         this.shipsGrid = new char[gridSize][gridSize];
         this.shotsGrid = new char[gridSize][gridSize];
-        this.gridSize = gridSize;
         // fills the ships and shots grids with '-' initially
         for (int i = 0; i < gridSize; i++){
             for (int j = 0; j < gridSize; j++){
@@ -21,7 +21,7 @@ public class Grids {
     }
 
     // checks and converts the inputted coordinates into their index numerical form (STATIC)
-    public static String coordcheck(String charInputCoords, int gridSize){
+    public static String coordCheck(String charInputCoords, int gridSize){
         // if for example the user enters "A,10", that is "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
         String row = charInputCoords.split(",", 2)[1];
         String column = charInputCoords.split(",", 2)[0];
@@ -43,15 +43,13 @@ public class Grids {
     }
 
     // checks to see if the chosen start and end coordinates are valid (NOT STATIC)
-    public boolean placecheck(String shipStartCoords, String shipEndCoords, int shipLength){
+    public boolean placeCheck(String shipStartCoords, String shipEndCoords, int shipLength){
         // sets the y and x coordinates from the example form of "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
         int startRow = Integer.parseInt(shipStartCoords.split(",", 2)[1]);
         int startColumn = Integer.parseInt(shipStartCoords.split(",", 2)[0]);
         int endRow = Integer.parseInt(shipEndCoords.split(",", 2)[1]);
         int endColumn = Integer.parseInt(shipEndCoords.split(",", 2)[0]);
         boolean validPlace = true;
-
-        // CONFIRM END AND START DISCREPENCY OF 1
 
         // checks if the coordinates form a ship of proper length by xoring the length in the row or column sides
         if ((Math.abs(endRow-startRow+1) == shipLength && Math.abs(endColumn-startColumn+1) == 0) ^ (Math.abs(endRow-startRow+1) == 0 && Math.abs(endColumn-startColumn+1) == shipLength)){
@@ -71,10 +69,13 @@ public class Grids {
         return validPlace;
     }
 
-    // REWRITE TO INITIALIZE SHIP OBJECT AND END-START COORD DISCREPENCY OF 1
-
     // updates (or places) ships of known valid details
-    public void updateship(String shipStartCoords, String shipEndCoords, char[] shipArray){
+    public void updateShip(Ships ship){
+        // gets the ship array for a specific ship to act on
+        char[] shipArray = ship.accessShipArray();
+        String shipStartCoords = ship.accessShipStartCoords();
+        String shipEndCoords = ship.accessShipEndCoords();
+
         // sets the y and x coordinates from the example form of "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
         int startRow = Integer.parseInt(shipStartCoords.split(",", 2)[1]);
         int startColumn = Integer.parseInt(shipStartCoords.split(",", 2)[0]);
