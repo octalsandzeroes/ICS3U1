@@ -3,21 +3,24 @@ import java.io.*;
 
 public class Ships {
     private char[] shipArray;
-    private String shipStartCoords; // the starting coords of a ship in "[Index #],[Index #]" format
-    private String shipEndCoords; // the ending coords of a ship in "[Index #],[Index #]" format
+    private String shipStartCoord; // the starting Coord of a ship in "[Index #],[Index #]" format
+    private String shipEndCoord; // the ending Coord of a ship in "[Index #],[Index #]" format
+    private String shipName;
+    private char shipChar;
     private int shipHealth;
 
-    public Ships(int shipSize, char shipChar, String shipStartCoords, String shipEndCoords){
+    public Ships(String shipName, char shipChar, int shipSize, String shipStartCoord, String shipEndCoord){
         // initializes the fields of the object
-        this.shipHealth = shipSize;
-        this.shipStartCoords = shipStartCoords;
-        this.shipEndCoords = shipEndCoords;
         this.shipArray = new char[shipSize];
+        this.shipStartCoord = shipStartCoord;
+        this.shipEndCoord = shipEndCoord;
+        this.shipName = shipName;
+        this.shipChar = shipChar;
+        this.shipHealth = shipSize;
 
         // fills the ships array with the ship character initially
         for (int i = 0; i < shipSize; i++){
             this.shipArray[i] = shipChar;
-            System.out.print(shipChar);
         }
     }
 
@@ -25,11 +28,11 @@ public class Ships {
         return this.shipArray;
     }
 
-    public String accessShipStartCoords(){
-        return this.shipStartCoords;
+    public String accessShipStartCoord(){
+        return this.shipStartCoord;
     }
 
-    public String accessShipEndCoords(){
-        return this.shipEndCoords;
+    public String accessShipEndCoord(){
+        return this.shipEndCoord;
     }
 }
