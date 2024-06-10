@@ -33,7 +33,7 @@ public class BattleshipRunner{
         for (int i = 0; i < NUM_SHIPS; i++){
             do {
                 // prompts for a starting coordinate and checks if it is valid
-                System.out.printf("Enter the start coordinate of your %s in \"[Column],[Row]\": ", SHIP_NAME_ARRAY[i]);
+                System.out.printf("Enter the start coordinate of your %s (length of %d) in \"[Column],[Row]\" format: ", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i]);
                 do {
                     inputCoord = getString(sc);
                     validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
@@ -42,7 +42,7 @@ public class BattleshipRunner{
                 shipStartCoord = Grids.convertCoord(inputCoord);
                 validCoord = false;
                 // prompts for a ending coordinate and checks if it is valid
-                System.out.printf("Enter the end coordinate of your %s in \"[Column],[Row]\": ", SHIP_NAME_ARRAY[i]);
+                System.out.printf("Enter the end coordinate of your %s (length of %d) in \"[Column],[Row]\" format: ", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i]);
                 do {
                     inputCoord = getString(sc);
                     validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
@@ -56,31 +56,7 @@ public class BattleshipRunner{
             } while (validPlace == false);
             validPlace = false;
             // creates a new ship object depending on the current ship (janky but no other viable option)
-            switch (i){
-                case 0:
-                    Ships PDestroyer = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    Player.updateShip(PDestroyer);
-                    break;
-                case 1:
-                    Ships PCruiser = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    Player.updateShip(PCruiser);
-                    break;
-                case 2:
-                    Ships PSubmarine = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    Player.updateShip(PSubmarine);
-                    break;
-                case 3:
-                    Ships PBattleship = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    Player.updateShip(PBattleship);
-                    break;
-                case 4:
-                    Ships PAircraftCarrier = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    Player.updateShip(PAircraftCarrier);
-                    break;
-                default:
-                    break;
-            }
-
+            Player.placeShip(SHIP_CHAR_ARRAY[i], shipStartCoord, shipEndCoord);
             Player.printGrid();
         }
 
@@ -88,40 +64,17 @@ public class BattleshipRunner{
         for (int i = 0; i < NUM_SHIPS; i++){
             do {
                 // prompts for a starting coordinate and checks if it is valid
-                shipStartCoord = (Math.random()*10) + "," + (Math.random()*10);
+                shipStartCoord = (int) (Math.random()*10) + "," + (int) (Math.random()*10);
                 // prompts for a ending coordinate and checks if it is valid
-                shipEndCoord = (Math.random()*10) + "," + (Math.random()*10);
+                shipEndCoord = (int) (Math.random()*10) + "," + (int) (Math.random()*10);
                 // checks if the placement of the ship is valid
                 validPlace = CPU.placeCheck(shipStartCoord, shipEndCoord, SHIP_SIZE_ARRAY[i]);
             } while (validPlace == false);
+            System.out.println(shipStartCoord + "  " + shipEndCoord);
             validPlace = false;
             // creates a new ship object depending on the current ship (janky but no other viable option)
-            switch (i){
-                case 0:
-                    Ships CDestroyer = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    CPU.updateShip(CDestroyer);
-                    break;
-                case 1:
-                    Ships CCruiser = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    CPU.updateShip(CCruiser);
-                    break;
-                case 2:
-                    Ships CSubmarine = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    CPU.updateShip(CSubmarine);
-                    break;
-                case 3:
-                    Ships CBattleship = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    CPU.updateShip(CBattleship);
-                    break;
-                case 4:
-                    Ships CAircraftCarrier = new Ships(SHIP_NAME_ARRAY[i], SHIP_CHAR_ARRAY[i], SHIP_SIZE_ARRAY[i], shipStartCoord, shipEndCoord);
-                    CPU.updateShip(CAircraftCarrier);
-                    break;
-                default:
-                    break;
-            }
-
-            CPU.printGrid();
+            CPU.placeShip(SHIP_CHAR_ARRAY[i], shipStartCoord, shipEndCoord);
+            // CPU.printGrid();
         }
     }
 

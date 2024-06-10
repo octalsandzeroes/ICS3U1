@@ -54,6 +54,7 @@ public class Grids {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     // checks the inputted coordinate to see if it is a valid choice
@@ -99,7 +100,18 @@ public class Grids {
         int startRow = Integer.parseInt(shipStartCoord.split(",", 2)[0]);
         int endColumn = Integer.parseInt(shipEndCoord.split(",", 2)[1]);
         int endRow = Integer.parseInt(shipEndCoord.split(",", 2)[0]);
+        int tempReg;
         boolean validPlace = true;
+
+        if (startColumn == endColumn && startRow > endRow){
+            tempReg = startRow;
+            startRow = endRow;
+            endRow = tempReg;
+        } else if (startColumn > endColumn && startRow == endRow){
+            tempReg = startColumn;
+            startColumn = endColumn;
+            endColumn = tempReg;
+        }
 
         // checks if the coordinate form a ship of proper length by xoring the length in the row or column sides
         if ((Math.abs(endRow-startRow)+1 == shipLength && Math.abs(endColumn-startColumn) == 0) ^ (Math.abs(endRow-startRow) == 0 && Math.abs(endColumn-startColumn)+1 == shipLength)){ // offset of 1 only for the row/column it actually is in
@@ -120,18 +132,23 @@ public class Grids {
     }
 
     // updates (or places) ships of known valid details
-    public void updateShip(Ships ship){
-        // gets the ship array for a specific ship to act on
-        char[] shipArray = ship.accessShipArray();
-        String shipStartCoord = ship.accessShipStartCoord();
-        String shipEndCoord = ship.accessShipEndCoord();
-
+    public void placeShip(char shipChar, String shipStartCoord, String shipEndCoord){
         // sets the y and x coordinates from the example form of "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
         int startColumn = Integer.parseInt(shipStartCoord.split(",", 2)[1]);
         int startRow = Integer.parseInt(shipStartCoord.split(",", 2)[0]);
         int endColumn = Integer.parseInt(shipEndCoord.split(",", 2)[1]);
         int endRow = Integer.parseInt(shipEndCoord.split(",", 2)[0]);
-        int l = 0; // counter for the array storing individual ships
+        int tempReg;
+
+        if (startColumn == endColumn && startRow > endRow){
+            tempReg = startRow;
+            startRow = endRow;
+            endRow = tempReg;
+        } else if (startColumn > endColumn && startRow == endRow){
+            tempReg = startColumn;
+            startColumn = endColumn;
+            endColumn = tempReg;
+        }
 
         /*
         System.out.println(shipStartCoord);
@@ -142,8 +159,7 @@ public class Grids {
 
         for (int j = startRow; j <= endRow; j++) { // check this first for array index out of bounds exceptions, (start end index hunch)
             for (int i = startColumn; i <= endColumn; i++) {
-                this.shipsGrid[j][i] = shipArray[l];
-                l++;
+                this.shipsGrid[j][i] = shipChar;
             }
         }
     }
