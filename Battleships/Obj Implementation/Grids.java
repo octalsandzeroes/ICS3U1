@@ -163,4 +163,104 @@ public class Grids {
             }
         }
     }
+
+    // automatic method to get a grid arrays from a file
+    public static char[][] getGrid(String header, int gridSize, String fileName){
+        char[][] grid = new char[gridSize][gridSize];
+        String lineIn;
+
+        try {
+            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            
+            lineIn = in.readLine();
+            while (lineIn != null){
+                if (lineIn.compareTo(header) == 0){
+                    for (int i = 0; i < gridSize; i++){
+                        lineIn = in.readLine();
+                        for (int j = 0; j < gridSize; j++){
+                            grid[i][j] = lineIn.charAt(j);
+                        }
+                    }
+                } else {
+                    lineIn = in.readLine();
+                }
+            }
+
+            in.close();
+        } catch (IOException e) {
+            System.out.println("Oops, something went wrong with the file " + e.getMessage());
+        }
+
+        return grid;
+    }
+
+    public static boolean checkShipsGrid(char[][] checkSavedGrid, char[] shipCharArray, int gridSize){
+        final char EMPTY_CHAR = '-';
+        final char HIT_CHAR = 'X';
+        final char MISS_CHAR = 'O';
+        boolean validGrid = true;
+        boolean validIndex = false;
+        int i = 0;
+        int j = 0;
+
+        // nested while loops that run while the grid is valid
+        while (i < gridSize && validGrid == true){
+            while (j < gridSize && validGrid == true){
+                // checks if the square is simply empty or has a hit or miss character
+                if (checkSavedGrid[i][j] == EMPTY_CHAR || checkSavedGrid[i][j] == HIT_CHAR || checkSavedGrid[i][j] == MISS_CHAR){
+                    validIndex = true;
+                // checks if the square has pieces
+                } else {
+                    for (int k = 0; k < shipCharArray.length; k++){
+                        if (checkSavedGrid[i][j] == shipCharArray[k]){
+                            validIndex = true;
+                        }
+                    }
+                }
+                // if by the end of checking for empty, hit, miss, or ship characters the valid intex variable is still false, the grid is invalid
+                if (validIndex == false){
+                    validGrid = false;
+                }
+            }
+            // reset the j counter and index validity boolean
+            j = 0;
+            validIndex = false;
+        }
+
+        return validGrid;
+    }
+
+    public static boolean checkShotsGrid(char[][] checkSavedGrid, int gridSize){
+        final char EMPTY_CHAR = '-';
+        final char HIT_CHAR = 'X';
+        final char MISS_CHAR = 'O';
+        boolean validGrid = true;
+        boolean validIndex = false;
+        int i = 0;
+        int j = 0;
+
+        // nested while loops that run while the grid is valid
+        while (i < gridSize && validGrid == true){
+            while (j < gridSize && validGrid == true){
+                // checks if the square is simply empty or has a hit or miss character
+                if (checkSavedGrid[i][j] == EMPTY_CHAR || checkSavedGrid[i][j] == HIT_CHAR || checkSavedGrid[i][j] == MISS_CHAR){
+                    validIndex = true;
+                }
+                // if by the end of checking for empty, hit, miss, or ship characters the valid intex variable is still false, the grid is invalid
+                if (validIndex == false){
+                    validGrid = false;
+                }
+            }
+            // reset the j counter and index validity boolean
+            j = 0;
+            validIndex = false;
+        }
+
+        return validGrid;
+    }
+
+    public void loadGrids(char[][] savedShipsGrid, char[][] savedShotsGrid){
+        this.shipsGrid = savedShipsGrid;
+        this.shotsGrid = savedShotsGrid;
+    }
 }
