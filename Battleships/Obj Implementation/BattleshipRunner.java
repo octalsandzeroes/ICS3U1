@@ -1,5 +1,4 @@
 import java.util.*;
-import java.io.*;
 
 public class BattleshipRunner{
     public static void main(String[] args) {
@@ -22,18 +21,22 @@ public class BattleshipRunner{
         char[][] cpuShotsGrid;
         String saveFileName;
         String inputCoord;
+        String shotCoord;
         String shipStartCoord;
         String shipEndCoord;
         int menuChoice = 0;
         boolean validCoord = false;
         boolean validPlace = false;
         boolean validLoad = true;
+        boolean validShot = true;
+        boolean playerFirst = true;
         boolean gameEnd = false;
         boolean quitGame = false;
 
         Scanner sc = new Scanner(System.in);
         
         // prints the game choices
+        System.out.println("[Batextships]");
         System.out.println("1) New Game");
         System.out.println("2) Load Game");
         System.out.println("3) List Rules");
@@ -50,7 +53,8 @@ public class BattleshipRunner{
             switch (menuChoice){
                 case 1:
                     // prints the empty grid to start the game
-                    Player.printGrid();
+                    System.out.println();
+                    Player.printPlaceGrid();
                     // creates the player ship objects
                     for (int i = 0; i < NUM_SHIPS; i++){
                         do {
@@ -79,7 +83,9 @@ public class BattleshipRunner{
                         validPlace = false;
                         // creates a new ship object depending on the current ship (janky but no other viable option)
                         Player.placeShip(SHIP_CHAR_ARRAY[i], shipStartCoord, shipEndCoord);
-                        Player.printGrid();
+                        // prints the updated grid
+                        System.out.println();
+                        Player.printPlaceGrid();
                     }
 
                     // creates the CPU ship objects
@@ -92,97 +98,144 @@ public class BattleshipRunner{
                             // checks if the placement of the ship is valid
                             validPlace = CPU.placeCheck(shipStartCoord, shipEndCoord, SHIP_SIZE_ARRAY[i]);
                         } while (validPlace == false);
-                        System.out.println(shipStartCoord + "  " + shipEndCoord);
+                        // System.out.println(shipStartCoord + "  " + shipEndCoord);
                         validPlace = false;
                         // creates a new ship object depending on the current ship (janky but no other viable option)
                         CPU.placeShip(SHIP_CHAR_ARRAY[i], shipStartCoord, shipEndCoord);
-                        // CPU.printGrid();
+                        // CPU.printPlaceGrid();
+                    }
+
+                    System.out.println("\n[Player Grids]");
+                    Player.printGrids();
+                    System.out.println("\n[CPU Grids]");
+                    CPU.printGrids();
+
+                    // randomizes who goes first
+                    // player turn
+                    if ((int) Math.random()*2 == 0){
+                        playerFirst = true;
+                    // cpu turn
+                    } else {
+                        playerFirst = false;
                     }
 
                     break;
                 case 2:
                     System.out.print("Enter the name of your save file: ");
                     saveFileName = getString(sc);
-
-                    // runs to get the player ships grid only if the valid load boolean is true
+                    
+                    // runs to get the player ships and shots grids only if the valid load boolean is true
                     if (validLoad == true){
                         playerShipsGrid = Grids.getGrid(PLAYER_SHIPS_HEADER, GRID_SIZE, saveFileName);
-                        if (playerShipsGrid == null){
-                            System.out.println("Invalid or missing data detected in save file.");
-                            validLoad = false;
-                            gameEnd = true;
-                        } else {
-                            validLoad = Grids.checkShipsGrid(playerShipsGrid, SHIP_CHAR_ARRAY, GRID_SIZE);
-                            if (validLoad == false){
-                                System.out.println("Invalid or missing data detected in save file.");
-                                validLoad = false;
-                                gameEnd = true;
-                            }
-                        }
-                    }
-
-                    // runs to get the player shots grid only if the valid load boolean is true
-                    if (validLoad == true){
                         playerShotsGrid = Grids.getGrid(PLAYER_SHOTS_HEADER, GRID_SIZE, saveFileName);
-                        if (playerShotsGrid == null){
-                            System.out.println("Invalid or missing data detected in save file.");
-                            validLoad = false;
-                            gameEnd = true;
-                        } else {
-                            validLoad = Grids.checkShotsGrid(playerShotsGrid, GRID_SIZE);
-                            if (validLoad == false){
+                        
+                        // runs to check the player ships grid only if the valid load boolean is true
+                        if (validLoad == true){
+                            /*
+                            for (int i = 0; i < GRID_SIZE; i++){
+                                for (int j = 0; j < GRID_SIZE; j++){
+                                    System.out.print(playerShipsGrid[i][j]);
+                                }
+                                System.out.println();
+                            }
+                            */
+
+                            if (playerShipsGrid == null){
                                 System.out.println("Invalid or missing data detected in save file.");
                                 validLoad = false;
                                 gameEnd = true;
+                            } else {
+                                validLoad = Grids.checkShipsGrid(playerShipsGrid, SHIP_CHAR_ARRAY, GRID_SIZE);
+                                if (validLoad == false){
+                                    System.out.println("Invalid or missing data detected in save file.");
+                                    validLoad = false;
+                                    gameEnd = true;
+                                }
                             }
+                        }
+
+                        // runs to check the player shots grid only if the valid load boolean is true
+                        if (validLoad == true){
+                            if (playerShotsGrid == null){
+                                System.out.println("Invalid or missing data detected in save file.");
+                                validLoad = false;
+                                gameEnd = true;
+                            } else {
+                                validLoad = Grids.checkShotsGrid(playerShotsGrid, GRID_SIZE);
+                                if (validLoad == false){
+                                    System.out.println("Invalid or missing data detected in save file.");
+                                    validLoad = false;
+                                    gameEnd = true;
+                                }
+                            }
+                        }
+
+                        // passes the valid grids to the object as fields
+                        if (validLoad == true){
+                            Player.loadGrids(playerShipsGrid, playerShotsGrid);
+                            System.out.println("\n[Player Grids]");
+                            Player.printGrids();
                         }
                     }
 
-                    // runs to get the CPU ships grid only if the valid load boolean is true
+                    // runs to get the CPU ships and shots grid only if the valid load boolean is true
                     if (validLoad == true){
                         cpuShipsGrid = Grids.getGrid(CPU_SHIPS_HEADER, GRID_SIZE, saveFileName);
-                        if (cpuShipsGrid == null){
-                            System.out.println("Invalid or missing data detected in save file.");
-                            validLoad = false;
-                            gameEnd = true;
-                        } else {
-                            validLoad = Grids.checkShipsGrid(cpuShipsGrid, SHIP_CHAR_ARRAY, GRID_SIZE);
-                            if (validLoad == false){
-                                System.out.println("Invalid or missing data detected in save file.");
-                                validLoad = false;
-                                gameEnd = true;
-                            }
-                        }
-                    }
-
-                    // runs to get the CPU shots grid only if the valid load boolean is true
-                    if (validLoad == true){
                         cpuShotsGrid = Grids.getGrid(CPU_SHOTS_HEADER, GRID_SIZE, saveFileName);
-                        if (cpuShotsGrid == null){
-                            System.out.println("Invalid or missing data detected in save file.");
-                            validLoad = false;
-                            gameEnd = true;
-                        } else {
-                            validLoad = Grids.checkShotsGrid(cpuShotsGrid, GRID_SIZE);
-                            if (validLoad == false){
+
+                        // runs to check the CPU ships grid only if the valid load boolean is true
+                        if (validLoad == true){
+                            if (cpuShipsGrid == null){
                                 System.out.println("Invalid or missing data detected in save file.");
                                 validLoad = false;
                                 gameEnd = true;
+                            } else {
+                                validLoad = Grids.checkShipsGrid(cpuShipsGrid, SHIP_CHAR_ARRAY, GRID_SIZE);
+                                if (validLoad == false){
+                                    System.out.println("Invalid or missing data detected in save file.");
+                                    validLoad = false;
+                                    gameEnd = true;
+                                }
                             }
+                        }
+
+                        // runs to check CPU shots grid only if the valid load boolean is true
+                        if (validLoad == true){
+                            if (cpuShotsGrid == null){
+                                System.out.println("Invalid or missing data detected in save file.");
+                                validLoad = false;
+                                gameEnd = true;
+                            } else {
+                                validLoad = Grids.checkShotsGrid(cpuShotsGrid, GRID_SIZE);
+                                if (validLoad == false){
+                                    System.out.println("Invalid or missing data detected in save file.");
+                                    validLoad = false;
+                                    gameEnd = true;
+                                }
+                            }
+                        }
+
+                        // passes the valid grids to the object as fields
+                        if (validLoad == true){
+                            CPU.loadGrids(cpuShipsGrid, cpuShotsGrid);
+                            System.out.println("\n[CPU Grids]");
+                            CPU.printGrids();
                         }
                     }
 
-
-                        for (int i = 0; i < GRID_SIZE; i++){
-                            for (int j = 0; j < GRID_SIZE; j++){
-                                System.out.print(playerShipsGrid[i][j]);
-                            }
-                            System.out.println();
-                        }
+                    // randomizes who goes first
+                    // player turn
+                    if ((int) Math.random()*2 == 0){
+                        playerFirst = true;
+                    // cpu turn
+                    } else {
+                        playerFirst = false;
                     }
+
                     break;
+                // display the game rules
                 case 3:
-                    //
+                    
                     break;
                 // quit game option
                 case 4:
@@ -193,13 +246,109 @@ public class BattleshipRunner{
                     break;
             }        
 
+            // while loop to stay inside of when the game is running
             while (gameEnd == false && (menuChoice == 1 || menuChoice == 2)){
-            
+                if (playerFirst == true){
+                    if (gameEnd == false){
+                        do{
+                            // prompts for a starting coordinate and checks if it is valid
+                            System.out.printf("Enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                            do {
+                                inputCoord = getString(sc);
+                                validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
+                                if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
+                            } while (validCoord == false);
+                            shotCoord = Grids.convertCoord(inputCoord);
+                            validCoord = false;
+
+                            validShot = Grids.updateShot(shotCoord, Player, CPU);
+                        } while (validShot == false);
+
+                        System.out.print("Player Turn:");
+                        System.out.println("\n[Player Grids]");
+                        Player.printGrids();
+                        System.out.println("\n[CPU Grids]");
+                        CPU.printGrids();
+
+                        gameEnd = CPU.checkLoss();
+                        if (gameEnd == true){
+                            System.out.println("Player Win!");
+                        }
+                    }
+
+                    if (gameEnd == false){
+                        do{
+                            // generates a coordinate
+                            shotCoord = (int) (Math.random()*10) + "," + (int) (Math.random()*10);
+                            validShot = Grids.updateShot(shotCoord, CPU, Player);
+                        } while (validShot == false);
+
+                        System.out.print("CPU Turn:");
+                        System.out.println("\n[Player Grids]");
+                        Player.printGrids();
+                        System.out.println("\n[CPU Grids]");
+                        CPU.printGrids();
+
+                        gameEnd = Player.checkLoss();
+                        if (gameEnd == true){
+                            System.out.println("CPU Win!");
+                        }
+                    }
+                } else {
+                    if (gameEnd == false){
+                        do{
+                            // generates a coordinate
+                            shotCoord = (int) (Math.random()*10) + "," + (int) (Math.random()*10);
+                            validShot = Grids.updateShot(shotCoord, CPU, Player);
+                        } while (validShot == false);
+
+                        System.out.print("CPU Turn:");
+                        System.out.println("\n[Player Grids]");
+                        Player.printGrids();
+                        System.out.println("\n[CPU Grids]");
+                        CPU.printGrids();
+
+                        gameEnd = Player.checkLoss();
+                        if (gameEnd == true){
+                            System.out.println("CPU Win!");
+                        }
+                    }
+
+                    if (gameEnd == false){
+                        do{
+                            // prompts for a starting coordinate and checks if it is valid
+                            System.out.printf("Enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                            do {
+                                inputCoord = getString(sc);
+                                validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
+                                if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
+                            } while (validCoord == false);
+                            shotCoord = Grids.convertCoord(inputCoord);
+                            validCoord = false;
+
+                            validShot = Grids.updateShot(shotCoord, Player, CPU);
+                        } while (validShot == false);
+
+                        System.out.print("Player Turn:");
+                        System.out.println("\n[Player Grids]");
+                        Player.printGrids();
+                        System.out.println("\n[CPU Grids]");
+                        CPU.printGrids();
+
+                        gameEnd = CPU.checkLoss();
+                        if (gameEnd == true){
+                            System.out.println("Player Win!");
+                        }
+                    }
+                }
             }
         
             System.out.println("Game Ended.");
-            sc.close();
+            Player.clearGrids();
+            CPU.clearGrids();
         }
+
+        sc.close();
     }
 
     // automatic method to get a string

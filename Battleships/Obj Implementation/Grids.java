@@ -1,4 +1,3 @@
-import java.util.*;
 import java.io.*;
 
 public class Grids {
@@ -28,16 +27,16 @@ public class Grids {
         return this.shotsGrid;
     }
 
-    public void printGrid(){
-        char[][] gridArray = this.accessShipsGrid();
+    public void printPlaceGrid(){
         String headerString;
 
         // prints the board during and just after updates
-        // prints the header
+        // prints the ships grid header
         System.out.print("   ");
         for (int i = 0; i < this.gridSize; i++){
             System.out.printf(" %c ", (char) (i+'A'));
         }
+
         System.out.println();
         // prints the body
         for (int i = 0; i < this.gridSize; i++){
@@ -50,7 +49,54 @@ public class Grids {
             }
             // prints the grid
             for (int j = 0; j < this.gridSize; j++){
-                System.out.print(" " + gridArray[i][j] + " ");
+                System.out.print(" " + this.shipsGrid[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public void printGrids(){
+        String headerString;
+
+        // prints the board during and just after updates
+        System.out.printf("%-36s%-33s%n", "Ships:", "Shots:");
+        // prints the ships grid header
+        System.out.print("   ");
+        for (int i = 0; i < this.gridSize; i++){
+            System.out.printf(" %c ", (char) (i+'A'));
+        }
+        // prints the shots grid header
+        System.out.print("      ");
+        for (int i = 0; i < this.gridSize; i++){
+            System.out.printf(" %c ", (char) (i+'A'));
+        }
+
+        System.out.println();
+        // prints the body
+        for (int i = 0; i < this.gridSize; i++){
+            // prints the ship body header
+            headerString = "" + (i+1);
+            if (headerString.length() == 1){
+                System.out.printf(" %s ", headerString);
+            } else if (headerString.length() == 2){
+                System.out.printf(" %s", headerString);
+            }
+            // prints the ships grid
+            for (int j = 0; j < this.gridSize; j++){
+                System.out.print(" " + this.shipsGrid[i][j] + " ");
+            }
+
+            // prints the shots body header
+            headerString = "   " + (i+1);
+            if (headerString.length() == 4){
+                System.out.printf(" %s ", headerString);
+            } else if (headerString.length() == 5){
+                System.out.printf(" %s", headerString);
+            }
+            // prints the shots grid
+            for (int j = 0; j < this.gridSize; j++){
+                System.out.print(" " + this.shotsGrid[i][j] + " ");
             }
             System.out.println();
         }
@@ -221,9 +267,11 @@ public class Grids {
                 if (validIndex == false){
                     validGrid = false;
                 }
+                j++;
             }
-            // reset the j counter and index validity boolean
+            // reset the j counter, increments the i counter, and index validity boolean
             j = 0;
+            i++;
             validIndex = false;
         }
 
@@ -250,17 +298,88 @@ public class Grids {
                 if (validIndex == false){
                     validGrid = false;
                 }
+                j++;
             }
-            // reset the j counter and index validity boolean
+            // reset the j counter, increments the i counter, and index validity boolean
             j = 0;
+            i++;
             validIndex = false;
         }
 
         return validGrid;
     }
 
+    // checks to see if a grid meets the lose condition
+    public boolean checkLoss(){
+        final char EMPTY_CHAR = '-';
+        final char HIT_CHAR = 'X';
+        final char MISS_CHAR = 'O';
+        boolean gameEnd = false;
+        boolean pieceCharDetected = false;
+        int i = 0;
+        int j = 0;
+
+        // nested while loops that run while the grid is valid
+        while (i < gridSize && gameEnd == false){
+            while (j < gridSize && gameEnd == false){
+                // checks if the square is simply empty or has a hit or miss character
+                if (this.shipsGrid[i][j] != EMPTY_CHAR && this.shipsGrid[i][j] != HIT_CHAR && this.shipsGrid[i][j] != MISS_CHAR){
+                    pieceCharDetected = true;
+                }
+                j++;
+            }
+            // reset the j counter, increments the i counter, and index validity boolean
+            j = 0;
+            i++;
+        }
+
+        // if by the end of checking for empty, hit, miss, or ship characters the valid intex variable is still false, the grid is invalid
+        if (pieceCharDetected == false){
+            gameEnd = true;
+        }
+
+        return gameEnd;
+    }
+
+    // updates (or places) ships of known valid details
+    public static boolean updateShot(String shotCoord, Grids shooter, Grids target){
+        final char EMPTY_CHAR = '-';
+        final char HIT_CHAR = 'X';
+        final char MISS_CHAR = 'O';
+
+        // sets the y and x coordinates from the example form of "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
+        int column = Integer.parseInt(shotCoord.split(",", 2)[1]);
+        int row = Integer.parseInt(shotCoord.split(",", 2)[0]);
+        boolean validShot = true;
+
+        // checks if a shot is a repeat, a hit, or a miss
+        if (target.shipsGrid[row][column] == HIT_CHAR || target.shipsGrid[row][column] == MISS_CHAR){
+            System.out.println("You have already shot at this coordinate before, please retry.");
+            validShot = false;
+        } else if (target.shipsGrid[row][column] != EMPTY_CHAR && target.shipsGrid[row][column] != HIT_CHAR && target.shipsGrid[row][column] != MISS_CHAR){
+            target.shipsGrid[row][column] = HIT_CHAR;
+            shooter.shotsGrid[row][column] = HIT_CHAR;
+        } else {
+            target.shipsGrid[row][column] = MISS_CHAR;
+            shooter.shotsGrid[row][column] = MISS_CHAR;
+        }
+
+        return validShot;
+
+    }
+
     public void loadGrids(char[][] savedShipsGrid, char[][] savedShotsGrid){
         this.shipsGrid = savedShipsGrid;
         this.shotsGrid = savedShotsGrid;
+    }
+
+    public void clearGrids(){
+        // fills the ships and shots grids with '-'
+        for (int i = 0; i < gridSize; i++){
+            for (int j = 0; j < gridSize; j++){
+                this.shipsGrid[i][j] = '-';
+                this.shotsGrid[i][j] = '-';
+            }
+        }
     }
 }
