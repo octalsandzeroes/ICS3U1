@@ -406,7 +406,7 @@ public class Grids {
 
         // checks if a shot is a repeat, a hit, or a miss
         if (target.shipsGrid[row][column] == HIT_CHAR || target.shipsGrid[row][column] == MISS_CHAR){
-            System.out.println("You have already shot at this coordinate before, please retry.");
+            System.out.println("\nYou have already shot at this coordinate before, please retry.");
             validShot = false;
         } else if (target.shipsGrid[row][column] != EMPTY_CHAR && target.shipsGrid[row][column] != HIT_CHAR && target.shipsGrid[row][column] != MISS_CHAR){
             target.shipsGrid[row][column] = HIT_CHAR;

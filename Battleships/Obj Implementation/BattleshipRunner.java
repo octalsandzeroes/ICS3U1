@@ -45,6 +45,7 @@ public class BattleshipRunner{
         System.out.println("4) Quit Game");
         // gets a valid integer choice from the user
         System.out.print("Enter a choice: ");
+
         while (quitGame == false){
             menuChoice = getInt(sc);
 
@@ -114,7 +115,7 @@ public class BattleshipRunner{
 
                     // randomizes who goes first
                     // player turn
-                    if ((int) Math.random()*2 == 0){
+                    if ((int) (Math.random()*2) == 0){
                         playerFirst = true;
                     // cpu turn
                     } else {
@@ -225,14 +226,7 @@ public class BattleshipRunner{
                         }
                     }
 
-                    // randomizes who goes first
-                    // player turn
-                    if ((int) Math.random()*2 == 0){
-                        playerFirst = true;
-                    // cpu turn
-                    } else {
-                        playerFirst = false;
-                    }
+                    playerFirst = true;
 
                     break;
                 // display the game rules
@@ -249,7 +243,12 @@ public class BattleshipRunner{
             }        
 
             // while loop to stay inside of when the game is running
-            System.out.println(playerFirst);
+            if (playerFirst == true){
+                System.out.println("The player has the first move!");
+            } else {
+                System.out.println("The CPUG,5 has the first move!");
+            }
+
             while (gameEnd == false && (menuChoice == 1 || menuChoice == 2)){
                 if (playerFirst == true){
                     if (gameEnd == false){
@@ -274,21 +273,28 @@ public class BattleshipRunner{
                                     if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
                                 }
                             } while (validCoord == false && gameEnd == false);
-                            shotCoord = Grids.convertCoord(inputCoord);
-                            validCoord = false;
+                            if (gameEnd == false){
+                                shotCoord = Grids.convertCoord(inputCoord);
+                                validCoord = false;
 
-                            validShot = Grids.updateShot(shotCoord, Player, CPU);
+                                validShot = Grids.updateShot(shotCoord, Player, CPU);
+                            }
                         } while (validShot == false);
 
-                        System.out.print("Player Turn:");
-                        System.out.println("\n[Player Grids]");
-                        Player.printGrids();
-                        System.out.println("\n[CPU Grids]");
-                        CPU.printGrids();
+                        // forfeiture check
+                        if (gameEnd == false){
+                            System.out.print("Player Turn:");
+                            System.out.println("\n[Player Grids]");
+                            Player.printGrids();
+                            System.out.println("\n[CPU Grids]");
+                            CPU.printGrids();
 
-                        gameEnd = CPU.checkLoss();
-                        if (gameEnd == true){
-                            System.out.println("Player Win!");
+                            gameEnd = CPU.checkLoss();
+                            if (gameEnd == true){
+                                System.out.println("Player Win!");
+                            }
+                        } else {
+                            System.out.println("\nThe player has surrendered.");
                         }
                     }
 
@@ -352,21 +358,28 @@ public class BattleshipRunner{
                                     if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
                                 }
                             } while (validCoord == false && gameEnd == false);
-                            shotCoord = Grids.convertCoord(inputCoord);
-                            validCoord = false;
+                            if (gameEnd == false){
+                                shotCoord = Grids.convertCoord(inputCoord);
+                                validCoord = false;
 
-                            validShot = Grids.updateShot(shotCoord, Player, CPU);
+                                validShot = Grids.updateShot(shotCoord, Player, CPU);
+                            }
                         } while (validShot == false);
 
-                        System.out.print("Player Turn:");
-                        System.out.println("\n[Player Grids]");
-                        Player.printGrids();
-                        System.out.println("\n[CPU Grids]");
-                        CPU.printGrids();
+                        // forfeiture check
+                        if (gameEnd == false){
+                            System.out.print("Player Turn:");
+                            System.out.println("\n[Player Grids]");
+                            Player.printGrids();
+                            System.out.println("\n[CPU Grids]");
+                            CPU.printGrids();
 
-                        gameEnd = CPU.checkLoss();
-                        if (gameEnd == true){
-                            System.out.println("Player Win!");
+                            gameEnd = CPU.checkLoss();
+                            if (gameEnd == true){
+                                System.out.println("Player Win!");
+                            }
+                        } else {
+                            System.out.println("The player has surrendered.");
                         }
                     }
                 }
