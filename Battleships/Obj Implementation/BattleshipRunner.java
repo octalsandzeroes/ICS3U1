@@ -14,6 +14,8 @@ public class BattleshipRunner{
         final String PLAYER_SHOTS_HEADER = "Player shots:";
         final String CPU_SHIPS_HEADER = "CPU ships:";
         final String CPU_SHOTS_HEADER = "CPU shots:";
+        final String SURRENDER_CHAR = "0";
+        final String SAVE_CHAR = "1";
 
         char[][] playerShipsGrid;
         char[][] cpuShipsGrid;
@@ -247,17 +249,31 @@ public class BattleshipRunner{
             }        
 
             // while loop to stay inside of when the game is running
+            System.out.println(playerFirst);
             while (gameEnd == false && (menuChoice == 1 || menuChoice == 2)){
                 if (playerFirst == true){
                     if (gameEnd == false){
                         do{
                             // prompts for a starting coordinate and checks if it is valid
-                            System.out.printf("Enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                            System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
+                            System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
                             do {
                                 inputCoord = getString(sc);
-                                validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
-                                if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
-                            } while (validCoord == false);
+                                if (inputCoord.compareTo(SURRENDER_CHAR) == 0) {
+                                    gameEnd = true;
+                                } else if (inputCoord.compareTo(SAVE_CHAR) == 0 ){
+                                    System.out.print("Enter the name of the file to save to: ");
+                                    saveFileName = getString(sc);
+                                    if (Grids.saveGrids(saveFileName, GRID_SIZE, Player, CPU, PLAYER_SHIPS_HEADER, PLAYER_SHOTS_HEADER, CPU_SHIPS_HEADER, CPU_SHOTS_HEADER) == true){
+                                        System.out.println("\nGrids saved.");
+                                    }
+                                    System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
+                                    System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                                } else {
+                                    validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
+                                    if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
+                                }
+                            } while (validCoord == false && gameEnd == false);
                             shotCoord = Grids.convertCoord(inputCoord);
                             validCoord = false;
 
@@ -317,12 +333,25 @@ public class BattleshipRunner{
                     if (gameEnd == false){
                         do{
                             // prompts for a starting coordinate and checks if it is valid
-                            System.out.printf("Enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                            System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
+                            System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
                             do {
                                 inputCoord = getString(sc);
-                                validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
-                                if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
-                            } while (validCoord == false);
+                                if (inputCoord.compareTo(SURRENDER_CHAR) == 0) {
+                                    gameEnd = true;
+                                } else if (inputCoord.compareTo(SAVE_CHAR) == 0 ){
+                                    System.out.print("Enter the name of the file to save to: ");
+                                    saveFileName = getString(sc);
+                                    if (Grids.saveGrids(saveFileName, GRID_SIZE, Player, CPU, PLAYER_SHIPS_HEADER, PLAYER_SHOTS_HEADER, CPU_SHIPS_HEADER, CPU_SHOTS_HEADER) == true){
+                                        System.out.println("Grids saved.");
+                                    }
+                                    System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
+                                    System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                                } else {
+                                    validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
+                                    if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
+                                }
+                            } while (validCoord == false && gameEnd == false);
                             shotCoord = Grids.convertCoord(inputCoord);
                             validCoord = false;
 

@@ -240,6 +240,58 @@ public class Grids {
         return grid;
     }
 
+    // automatic method to get a grid arrays from a file
+    public static boolean saveGrids(String fileName, int gridSize, Grids player, Grids CPU, String playerShipsHeader, String playerShotsHeader, String cpuShipsHeader, String cpuShotsHeader){
+        boolean gridsSavedCheck = false;
+
+        try {
+            BufferedWriter out = new BufferedWriter(new FileWriter(fileName, false));
+            
+            out.write(playerShipsHeader);
+            out.newLine();
+            for (int i = 0; i < gridSize; i++){
+                for (int j = 0; j < gridSize; j++){
+                    out.write(player.shipsGrid[i][j]);
+                }
+                out.newLine();   
+            }
+
+            out.write(cpuShipsHeader);
+            out.newLine();
+            for (int i = 0; i < gridSize; i++){
+                for (int j = 0; j < gridSize; j++){
+                    out.write(CPU.shipsGrid[i][j]);
+                }
+                out.newLine();   
+            }
+
+            out.write(playerShotsHeader);
+            out.newLine();
+            for (int i = 0; i < gridSize; i++){
+                for (int j = 0; j < gridSize; j++){
+                    out.write(player.shotsGrid[i][j]);
+                }
+                out.newLine();   
+            }
+
+            out.write(cpuShotsHeader);
+            out.newLine();
+            for (int i = 0; i < gridSize; i++){
+                for (int j = 0; j < gridSize; j++){
+                    out.write(CPU.shotsGrid[i][j]);
+                }
+                out.newLine();   
+            }
+
+            gridsSavedCheck = true;
+            out.close();
+        } catch (IOException e) {
+            System.out.println("Oops, something went wrong with the file " + e.getMessage());
+        }
+
+        return gridsSavedCheck;
+    }
+
     public static boolean checkShipsGrid(char[][] checkSavedGrid, char[] shipCharArray, int gridSize){
         final char EMPTY_CHAR = '-';
         final char HIT_CHAR = 'X';
