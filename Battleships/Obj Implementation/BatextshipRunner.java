@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 /*
  * BatextshipRunner
@@ -148,6 +149,17 @@ public class BatextshipRunner{
                 case 2:
                     System.out.print("Enter the name of your save file: ");
                     saveFileName = getString(sc);
+
+                    try{
+                        BufferedReader testIn = new BufferedReader(new FileReader(saveFileName));
+                        testIn.readLine();
+                        validLoad = true;
+                        testIn.close();
+                    } catch (IOException e){
+                        System.out.println("Oops, something went wrong with the file " + e.getMessage());
+                        validLoad = false;
+                        gameEnd = true;
+                    }
                     
                     // runs to get the player ships and shots grids only if the valid load boolean is true
                     if (validLoad == true){
@@ -249,9 +261,10 @@ public class BatextshipRunner{
                     }
 
                     // prints that the player has the first move as the player save functionality saves on the player's turn
-                    playerFirst = true;
-                    System.out.println("The player has the first move!");
-
+                    if (validLoad == true){
+                        playerFirst = true;
+                        System.out.println("The player has the first move!");
+                    }
                     break;
                 // display the game rules
                 case 3:
@@ -289,7 +302,7 @@ public class BatextshipRunner{
                     quitGame = true;
                     break;
                 default:
-                    System.out.print("Invalid input, please retry: ");
+                    System.out.println("Invalid input, please retry.");
                     break;
             }        
 
@@ -430,8 +443,8 @@ public class BatextshipRunner{
                 }
             }
         
-            if (gameEnd == true){
-                System.out.println("Game Ended.\n");
+            if (quitGame == true){
+                System.out.println("Game Ended.");
                 Player.clearGrids();
                 CPU.clearGrids();
                 gameEnd = false;
