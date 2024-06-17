@@ -54,7 +54,7 @@ public class BatextshipRunner{
 
         while (quitGame == false){
             // prints the game choices
-            System.out.println("[Batextships]");
+            System.out.println("\n[Batextships]");
             System.out.println("1) New Game");
             System.out.println("2) Load Game");
             System.out.println("3) List Rules");
