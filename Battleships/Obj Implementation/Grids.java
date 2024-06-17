@@ -1,10 +1,26 @@
 import java.io.*;
 
+/*
+ * Grids
+ *
+ * By Andrew Martinus
+ *
+ * Last modified on June 17, 2024
+ *
+ * This program is the Grids class of a text-based implementation of the classic Battleship game featuring
+ * a manual setup and saving/loading game functionality, rulebook, and an AI opponent.
+ * The purpose of this class is to manage the logistics of the grids in play during the game, 
+ * as well and the saving and loading to and from files.
+ */
+
 public class Grids {
     private char[][] shipsGrid;
     private char[][] shotsGrid;
     private int gridSize;
 
+    /*====================================================================
+    |  Constructor method                                                |
+    ====================================================================*/
     public Grids(int gridSize){
         // initializes the ships and shots grids
         this.gridSize = gridSize;
@@ -19,14 +35,35 @@ public class Grids {
         }
     }
 
+    /*========================================================================
+    |  String accessShipsGrid()                                              |
+    |------------------------------------------------------------------------|
+    |  returns char[][] - A 2D ships grid array                              |
+    |------------------------------------------------------------------------|
+    |  This accessor method returns the ships grid array for a grids object  |
+    ========================================================================*/
     public char[][] accessShipsGrid(){
         return this.shipsGrid;
     }
 
+    /*========================================================================
+    |  String accessShotsGrid()                                              |
+    |------------------------------------------------------------------------|
+    |  returns char[][] - A 2D shots grid array                              |
+    |------------------------------------------------------------------------|
+    |  This accessor method returns the shots grid array for a grids object  |
+    ========================================================================*/
     public char[][] accessShotsGrid(){
         return this.shotsGrid;
     }
 
+    /*========================================================================
+    |  void printPlaceGrid()                                                |
+    |------------------------------------------------------------------------|
+    |  returns void                                                          |
+    |------------------------------------------------------------------------|
+    |  This method prints the player ships grid during ship placement        |
+    ========================================================================*/
     public void printPlaceGrid(){
         String headerString;
 
@@ -56,6 +93,14 @@ public class Grids {
         System.out.println();
     }
 
+
+    /*========================================================================
+    |  void printGrids()                                                     |
+    |------------------------------------------------------------------------|
+    |  returns void                                                          |
+    |------------------------------------------------------------------------|
+    |  This method prints the ships and shots grids                          |
+    ========================================================================*/
     public void printGrids(){
         String headerString;
 
@@ -103,6 +148,18 @@ public class Grids {
         System.out.println();
     }
 
+
+    /*=================================================================================================
+    |  boolean coordCheck(String charInputCoord, int gridSize)                                        |
+    |-------------------------------------------------------------------------------------------------|
+    |  String charInputCoord - The inputted character coordinates                                     |
+    |-------------------------------------------------------------------------------------------------|
+    |  int gridSize - The size of the grid                                                            |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns boolean - The coordinate check result                                                  |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method checks to see if an inputted coordinate is a valid one and returns the result      |
+    =================================================================================================*/
     // checks the inputted coordinate to see if it is a valid choice
     public static boolean coordCheck(String charInputCoord, int gridSize){
         // if for example the user enters "A,10", that is "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
@@ -130,6 +187,15 @@ public class Grids {
         return validCoord;
     }
 
+    /*=================================================================================================
+    |  String convertCoord(String charInputCoord)                                                     |
+    |-------------------------------------------------------------------------------------------------|
+    |  String charInputCoord - An string coordinate                                                   |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns String - The converted coordinates                                                     |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method converts the inputted coordinates into their array index numerical form            |
+    =================================================================================================*/
     // checks and converts the inputted coordinates into their index numerical form (STATIC)
     public static String convertCoord(String charInputCoord){
         // if for example the user enters "A,10", that is "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
@@ -139,7 +205,19 @@ public class Grids {
         return intInputCoord;
     }
 
-    // checks to see if the chosen start and end coordinates are valid (NOT STATIC)
+    /*=================================================================================================
+    |  boolean placeCheck(String shipStartCoord, String shipEndCoord, int shipLength)                 |
+    |-------------------------------------------------------------------------------------------------|
+    |  String shipStartCoord - An individually valid start coordinate                                 |
+    |-------------------------------------------------------------------------------------------------|
+    |  String shipEndCoord - An individually valid end coordinate                                     |
+    |-------------------------------------------------------------------------------------------------|
+    |  int shipLength - The size of the ship being placed                                             |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns boolean - The placement check result                                                   |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method checks to see if an placement is a valid one and returns the result                |
+    =================================================================================================*/
     public boolean placeCheck(String shipStartCoord, String shipEndCoord, int shipLength){
         // sets the y and x coordinates from the example form of "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
         int startColumn = Integer.parseInt(shipStartCoord.split(",", 2)[1]);
@@ -177,7 +255,19 @@ public class Grids {
         return validPlace;
     }
 
-    // updates (or places) ships of known valid details
+    /*=================================================================================================
+    |  void placeShip(char shipChar, String shipStartCoord, String shipEndCoord)                      |
+    |-------------------------------------------------------------------------------------------------|
+    |  int shipChar - The character signifying the ship being placed                                  |
+    |-------------------------------------------------------------------------------------------------|
+    |  String shipStartCoord - An valid start coordinate                                              |
+    |-------------------------------------------------------------------------------------------------|
+    |  String shipEndCoord - An valid end coordinate                                                  |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns void                                                                                   |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method places ships with known valid start and end coordinates                            |
+    =================================================================================================*/
     public void placeShip(char shipChar, String shipStartCoord, String shipEndCoord){
         // sets the y and x coordinates from the example form of "0,9", where it is the first column and tenth row in the 2D array (y,x) or (j,i)
         int startColumn = Integer.parseInt(shipStartCoord.split(",", 2)[1]);
@@ -210,8 +300,23 @@ public class Grids {
         }
     }
 
+    /*=================================================================================================
+    |  char[][] getGrid(String header, int gridSize, String fileName)                                 |
+    |-------------------------------------------------------------------------------------------------|
+    |  String header - A string header prior to the grid in focus                                     |
+    |-------------------------------------------------------------------------------------------------|
+    |  int gridSize - The size of the grid                                                            |
+    |-------------------------------------------------------------------------------------------------|
+    |  String fileName - The name of the file getting parsed                                          |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns char[][] - The grid from the file                                                      |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method automatically gets a selected grid from a file                                     |
+    =================================================================================================*/
     // automatic method to get a grid arrays from a file
     public static char[][] getGrid(String header, int gridSize, String fileName){
+        final char[][] EMPTY_GRID = new char[gridSize][gridSize];
+
         char[][] grid = new char[gridSize][gridSize];
         String lineIn;
 
@@ -235,12 +340,40 @@ public class Grids {
             in.close();
         } catch (IOException e) {
             System.out.println("Oops, something went wrong with the file " + e.getMessage());
+            grid = EMPTY_GRID;
+        } catch (ArrayIndexOutOfBoundsException f) {
+            System.out.println("Oops, something went wrong with grid " + f.getMessage());
+            grid = EMPTY_GRID;
         }
 
         return grid;
     }
 
-    // automatic method to get a grid arrays from a file
+    /*=================================================================================================
+    |  boolean saveGrids(String fileName, int gridSize, Grids player, Grids CPU,                      |
+    |                    String playerShipsHeader, String playerShotsHeader,                          |
+    |                    String cpuShipsHeader, String cpuShotsHeader)                                |
+    |-------------------------------------------------------------------------------------------------|
+    |  String fileName - The name of the file where the grids will be saved                           |
+    |-------------------------------------------------------------------------------------------------|
+    |  int gridSize - The size of the grid                                                            |
+    |-------------------------------------------------------------------------------------------------|
+    |  Grids player - The player's grids object                                                       |
+    |-------------------------------------------------------------------------------------------------|
+    |  Grids CPU - The CPU's grids object                                                             |
+    |-------------------------------------------------------------------------------------------------|
+    |  String playerShipsHeader - The header for the player's ships grid                              |
+    |-------------------------------------------------------------------------------------------------|
+    |  String playerShotsHeader - The header for the player's shots grid                              |
+    |-------------------------------------------------------------------------------------------------|
+    |  String cpuShipsHeader - The header for the CPU's ships grid                                    |
+    |-------------------------------------------------------------------------------------------------|
+    |  String cpuShotsHeader - The header for the CPU's shots grid                                    |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns boolean - True if the grids were successfully saved, false otherwise                   |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method automatically saves the current state of both players' grids to a specified file   |
+    =================================================================================================*/
     public static boolean saveGrids(String fileName, int gridSize, Grids player, Grids CPU, String playerShipsHeader, String playerShotsHeader, String cpuShipsHeader, String cpuShotsHeader){
         boolean gridsSavedCheck = false;
 
@@ -292,6 +425,19 @@ public class Grids {
         return gridsSavedCheck;
     }
 
+    /*==============================================================================================================
+    |  boolean checkShipsGrid(char[][] checkSavedGrid, char[] shipCharArray, int gridSize)                         |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  char[][] checkSavedGrid - The grid to be checked for valid characters                                       |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  char[] shipCharArray - An array of characters representing the ships                                        |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  int gridSize - The size of the grid                                                                         |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  returns boolean - True if the grid contains only valid characters, false otherwise                          |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  This method checks if a saved ships grid contains only valid characters (empty, hit, miss, or ship pieces)  |
+    ==============================================================================================================*/
     public static boolean checkShipsGrid(char[][] checkSavedGrid, char[] shipCharArray, int gridSize){
         final char EMPTY_CHAR = '-';
         final char HIT_CHAR = 'X';
@@ -330,6 +476,17 @@ public class Grids {
         return validGrid;
     }
 
+    /*==============================================================================================================
+    |  boolean checkShotsGrid(char[][] checkSavedGrid, int gridSize)                                               |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  char[][] checkSavedGrid - The grid to be checked for valid characters                                       |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  int gridSize - The size of the grid                                                                         |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  returns boolean - True if the grid contains only valid characters, false otherwise                          |
+    |--------------------------------------------------------------------------------------------------------------|
+    |  This method checks if a saved shots grid contains only valid characters (empty, hit, or miss)               |
+    ==============================================================================================================*/
     public static boolean checkShotsGrid(char[][] checkSavedGrid, int gridSize){
         final char EMPTY_CHAR = '-';
         final char HIT_CHAR = 'X';
@@ -361,7 +518,14 @@ public class Grids {
         return validGrid;
     }
 
-    // checks to see if a grid meets the lose condition
+    /*======================================================================================================
+    |  boolean checkLoss()                                                                                 |
+    |------------------------------------------------------------------------------------------------------|
+    |  returns boolean - True if the grid meets the lose condition (no ship pieces left), false otherwise  |
+    |------------------------------------------------------------------------------------------------------|
+    |  This method checks to see if a grid meets the lose condition by verifying                           |
+    |  if there are no ship pieces left on the grid.                                                       |
+    ======================================================================================================*/
     public boolean checkLoss(){
         final char EMPTY_CHAR = '-';
         final char HIT_CHAR = 'X';
@@ -393,7 +557,19 @@ public class Grids {
         return gameEnd;
     }
 
-    // updates (or places) ships of known valid details
+    /*=================================================================================================
+    |  boolean updateShot(String shotCoord, Grids shooter, Grids target)                              |
+    |-------------------------------------------------------------------------------------------------|
+    |  String shotCoord - The coordinate of the shot                                                  |
+    |-------------------------------------------------------------------------------------------------|
+    |  Grids shooter - The grids object of the player taking the shot                                 |
+    |-------------------------------------------------------------------------------------------------|
+    |  Grids target - The grids object of the player being targeted                                   |
+    |-------------------------------------------------------------------------------------------------|
+    |  returns boolean - True if the shot is valid and updated, false if the shot was a repeat        |
+    |-------------------------------------------------------------------------------------------------|
+    |  This method updates the grids based on the shot coordinates provided, marking hits and misses. |
+    =================================================================================================*/
     public static boolean updateShot(String shotCoord, Grids shooter, Grids target){
         final char EMPTY_CHAR = '-';
         final char HIT_CHAR = 'X';
@@ -409,6 +585,7 @@ public class Grids {
             System.out.println("\nYou have already shot at this coordinate before, please retry.");
             validShot = false;
         } else if (target.shipsGrid[row][column] != EMPTY_CHAR && target.shipsGrid[row][column] != HIT_CHAR && target.shipsGrid[row][column] != MISS_CHAR){
+            System.out.println("\nHit detected!");
             target.shipsGrid[row][column] = HIT_CHAR;
             shooter.shotsGrid[row][column] = HIT_CHAR;
         } else {
@@ -417,14 +594,31 @@ public class Grids {
         }
 
         return validShot;
-
     }
 
+    /*===========================================================================
+    |  void loadGrids()                                                         |
+    |---------------------------------------------------------------------------|
+    |  char[][] savedShipsGrid - A valid saved ships grid                       |
+    |---------------------------------------------------------------------------|
+    |  char[][] savedShotsGrid - A valid saved shots grid                       |
+    |---------------------------------------------------------------------------|
+    |  returns void                                                             |
+    |---------------------------------------------------------------------------|
+    |  This mutator method loads grids by modying the fields of a grid's object |
+    ===========================================================================*/
     public void loadGrids(char[][] savedShipsGrid, char[][] savedShotsGrid){
         this.shipsGrid = savedShipsGrid;
         this.shotsGrid = savedShotsGrid;
     }
 
+    /*========================================================================
+    |  void clearGrids()                                                     |
+    |------------------------------------------------------------------------|
+    |  returns void                                                          |
+    |------------------------------------------------------------------------|
+    |  This method clears a grid object's grids by resetting them to default |
+    ========================================================================*/
     public void clearGrids(){
         // fills the ships and shots grids with '-'
         for (int i = 0; i < gridSize; i++){

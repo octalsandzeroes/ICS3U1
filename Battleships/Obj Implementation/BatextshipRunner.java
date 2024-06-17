@@ -1,6 +1,17 @@
 import java.util.*;
 
-public class BattleshipRunner{
+/*
+ * BatextshipRunner
+ *
+ * By Andrew Martinus
+ *
+ * Last modified on June 17, 2024
+ *
+ * This program is the main class of a text-based implementation of the classic Battleship game featuring
+ * a manual setup and saving/loading game functionality, rulebook, and an AI opponent
+ */
+
+public class BatextshipRunner{
     public static void main(String[] args) {
         // static variables for the grid size and number of ships
         final int GRID_SIZE = 10;
@@ -16,17 +27,21 @@ public class BattleshipRunner{
         final String CPU_SHOTS_HEADER = "CPU shots:";
         final String SURRENDER_CHAR = "0";
         final String SAVE_CHAR = "1";
-
+        
+        // character arrays for parsing file data
         char[][] playerShipsGrid;
         char[][] cpuShipsGrid;
         char[][] playerShotsGrid;
         char[][] cpuShotsGrid;
+        // string variables for inputs and storing coordinates
         String saveFileName;
         String inputCoord;
         String shotCoord;
         String shipStartCoord;
         String shipEndCoord;
+        // integer variable for menu choice
         int menuChoice = 0;
+        // boolean check variables
         boolean validCoord = false;
         boolean validPlace = false;
         boolean validLoad = true;
@@ -36,17 +51,17 @@ public class BattleshipRunner{
         boolean quitGame = false;
 
         Scanner sc = new Scanner(System.in);
-        
-        // prints the game choices
-        System.out.println("[Batextships]");
-        System.out.println("1) New Game");
-        System.out.println("2) Load Game");
-        System.out.println("3) List Rules");
-        System.out.println("4) Quit Game");
-        // gets a valid integer choice from the user
-        System.out.print("Enter a choice: ");
 
         while (quitGame == false){
+            // prints the game choices
+            System.out.println("[Batextships]");
+            System.out.println("1) New Game");
+            System.out.println("2) Load Game");
+            System.out.println("3) List Rules");
+            System.out.println("4) Quit Game");
+            // gets a valid integer choice from the user
+            System.out.print("Enter a choice: ");
+
             menuChoice = getInt(sc);
 
             // creates the grid objects for the player and CPU
@@ -62,7 +77,7 @@ public class BattleshipRunner{
                     for (int i = 0; i < NUM_SHIPS; i++){
                         do {
                             // prompts for a starting coordinate and checks if it is valid
-                            System.out.printf("Enter the start coordinate of your %s (length of %d) in \"[Column],[Row]\" format: ", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i]);
+                            System.out.printf("Enter the start coordinate of your %s (length of %d) in \"[COLUMN],[ROW]\" format: ", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i]);
                             do {
                                 inputCoord = getString(sc);
                                 validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
@@ -71,7 +86,7 @@ public class BattleshipRunner{
                             shipStartCoord = Grids.convertCoord(inputCoord);
                             validCoord = false;
                             // prompts for a ending coordinate and checks if it is valid
-                            System.out.printf("Enter the end coordinate of your %s (length of %d) in \"[Column],[Row]\" format: ", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i]);
+                            System.out.printf("Enter the end coordinate of your %s (length of %d) in \"[COLUMN],[ROW]\" format: ", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i]);
                             do {
                                 inputCoord = getString(sc);
                                 validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
@@ -110,8 +125,8 @@ public class BattleshipRunner{
 
                     System.out.println("\n[Player Grids]");
                     Player.printGrids();
-                    System.out.println("\n[CPU Grids]");
-                    CPU.printGrids();
+                    // System.out.println("\n[CPU Grids]");
+                    // CPU.printGrids();
 
                     // randomizes who goes first
                     // player turn
@@ -120,6 +135,13 @@ public class BattleshipRunner{
                     // cpu turn
                     } else {
                         playerFirst = false;
+                    }
+
+                    // prints the result of the first turn randomization
+                    if (playerFirst == true){
+                        System.out.println("The player has the first move!");
+                    } else {
+                        System.out.println("The CPU has the first move!");
                     }
 
                     break;
@@ -221,17 +243,46 @@ public class BattleshipRunner{
                         // passes the valid grids to the object as fields
                         if (validLoad == true){
                             CPU.loadGrids(cpuShipsGrid, cpuShotsGrid);
-                            System.out.println("\n[CPU Grids]");
-                            CPU.printGrids();
+                            // System.out.println("\n[CPU Grids]");
+                            // CPU.printGrids();
                         }
                     }
 
+                    // prints that the player has the first move as the player save functionality saves on the player's turn
                     playerFirst = true;
+                    System.out.println("The player has the first move!");
 
                     break;
                 // display the game rules
                 case 3:
-                    
+                    System.out.println("\nWelcome to Batextships!");
+                    System.out.println();
+                    System.out.println("Battleship is a game played by two players. Each player has two boards that they play with: ");
+                    System.out.println("the ship board, and the shots board. Each board is a 10 x 10 grid.");
+                    System.out.println();
+                    System.out.println("At the beginning of the game, each player will place 5 ships of different sizes on the ship board. ");
+                    System.out.println("The ships and their sizes are:");
+                    for (int i = 0; i < SHIP_NAME_ARRAY.length; i++){
+                        System.out.printf(" - %s (%d squares long) [%c]%n", SHIP_NAME_ARRAY[i], SHIP_SIZE_ARRAY[i], SHIP_CHAR_ARRAY[i]);    
+                    }
+                    System.out.println();
+                    System.out.println("The ships may be placed vertically or horizontally, but NOT diagonally.");
+                    System.out.println();
+                    System.out.println("After the ships have been placed, the players then take turns firing shots at their opponent's ships.");
+                    System.out.println("A shot is fired by choosing a location by giving the coordinates corresponding to a row and column in [COLUMN],[ROW] form.");
+                    System.out.println("The player is then told whether it is a hit (if the square contains one of their opponent's ships) ");
+                    System.out.println("or a miss (if the square does not contain a ship). The results of the guess are then recorded on the shots board,");
+                    System.out.println("with an 'X' signifying a hit and an 'O' signifying a miss. Squares not fired at yet are represent by a '-'.");
+                    System.out.println();
+                    System.out.println("When the opponent fires at a player, the results of the opponent's guess are recorded on the player's ship board.");
+                    System.out.println("A ship is sunk if all squares on that ship have been hit.");
+                    System.out.println("The game is won when all of an opponent's ships have been sunk.");
+                    System.out.println();
+                    System.out.println("Presently, this implementation of Battleship allows the player to play against an AI opponent as the second player.");
+                    System.out.println("For the best experience possible, please play in fullscreen mode.");
+                    System.out.println();
+                    System.out.println("Good luck and have fun playing Batextships!");
+                    System.out.println();
                     break;
                 // quit game option
                 case 4:
@@ -243,19 +294,13 @@ public class BattleshipRunner{
             }        
 
             // while loop to stay inside of when the game is running
-            if (playerFirst == true){
-                System.out.println("The player has the first move!");
-            } else {
-                System.out.println("The CPUG,5 has the first move!");
-            }
-
             while (gameEnd == false && (menuChoice == 1 || menuChoice == 2)){
                 if (playerFirst == true){
                     if (gameEnd == false){
                         do{
                             // prompts for a starting coordinate and checks if it is valid
                             System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
-                            System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                            System.out.printf("Otherwise, enter a coordinate to shoot at in \"[COLUMN],[ROW]\" format: ");
                             do {
                                 inputCoord = getString(sc);
                                 if (inputCoord.compareTo(SURRENDER_CHAR) == 0) {
@@ -267,7 +312,7 @@ public class BattleshipRunner{
                                         System.out.println("\nGrids saved.");
                                     }
                                     System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
-                                    System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                                    System.out.printf("Otherwise, enter a coordinate to shoot at in \"[COLUMN],[ROW]\" format: ");
                                 } else {
                                     validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
                                     if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
@@ -283,11 +328,11 @@ public class BattleshipRunner{
 
                         // forfeiture check
                         if (gameEnd == false){
-                            System.out.print("Player Turn:");
+                            System.out.print("\nPlayer Turn:");
                             System.out.println("\n[Player Grids]");
                             Player.printGrids();
-                            System.out.println("\n[CPU Grids]");
-                            CPU.printGrids();
+                            // System.out.println("\n[CPU Grids]");
+                            // CPU.printGrids();
 
                             gameEnd = CPU.checkLoss();
                             if (gameEnd == true){
@@ -308,8 +353,8 @@ public class BattleshipRunner{
                         System.out.print("CPU Turn:");
                         System.out.println("\n[Player Grids]");
                         Player.printGrids();
-                        System.out.println("\n[CPU Grids]");
-                        CPU.printGrids();
+                        // System.out.println("\n[CPU Grids]");
+                        // CPU.printGrids();
 
                         gameEnd = Player.checkLoss();
                         if (gameEnd == true){
@@ -327,8 +372,8 @@ public class BattleshipRunner{
                         System.out.print("CPU Turn:");
                         System.out.println("\n[Player Grids]");
                         Player.printGrids();
-                        System.out.println("\n[CPU Grids]");
-                        CPU.printGrids();
+                        // System.out.println("\n[CPU Grids]");
+                        // CPU.printGrids();
 
                         gameEnd = Player.checkLoss();
                         if (gameEnd == true){
@@ -340,7 +385,7 @@ public class BattleshipRunner{
                         do{
                             // prompts for a starting coordinate and checks if it is valid
                             System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
-                            System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                            System.out.printf("Otherwise, enter a coordinate to shoot at in \"[COLUMN],[ROW]\" format: ");
                             do {
                                 inputCoord = getString(sc);
                                 if (inputCoord.compareTo(SURRENDER_CHAR) == 0) {
@@ -352,7 +397,7 @@ public class BattleshipRunner{
                                         System.out.println("Grids saved.");
                                     }
                                     System.out.printf("Enter \"%s\" to surrender, or enter \"%s\" to save the game progress.%n", SURRENDER_CHAR, SAVE_CHAR);
-                                    System.out.printf("Otherwise, enter a coordinate to shoot at in \"[Column],[Row]\" format: ");
+                                    System.out.printf("Otherwise, enter a coordinate to shoot at in \"[COLUMN],[ROW]\" format: ");
                                 } else {
                                     validCoord = Grids.coordCheck(inputCoord, GRID_SIZE);
                                     if (validCoord == false) System.out.print("Invalid coordinate, please retry: ");
@@ -371,8 +416,8 @@ public class BattleshipRunner{
                             System.out.print("Player Turn:");
                             System.out.println("\n[Player Grids]");
                             Player.printGrids();
-                            System.out.println("\n[CPU Grids]");
-                            CPU.printGrids();
+                            // System.out.println("\n[CPU Grids]");
+                            // CPU.printGrids();
 
                             gameEnd = CPU.checkLoss();
                             if (gameEnd == true){
@@ -385,20 +430,40 @@ public class BattleshipRunner{
                 }
             }
         
-            System.out.println("Game Ended.");
-            Player.clearGrids();
-            CPU.clearGrids();
+            if (gameEnd == true){
+                System.out.println("Game Ended.\n");
+                Player.clearGrids();
+                CPU.clearGrids();
+                gameEnd = false;
+            }
         }
 
         sc.close();
     }
 
-    // automatic method to get a string
+    /*====================================================================
+    |  String getString (Scanner sc)                                     |
+    |--------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                         |
+    |--------------------------------------------------------------------|
+    |  returns String - A valid string                                   |
+    |--------------------------------------------------------------------|
+    |  This method prompts and gets a string input from the user         |
+    ====================================================================*/
     public static String getString(Scanner sc){
         String userInput = sc.nextLine();
         return userInput;
     }
 
+    /*=====================================================================
+    |  String getChar (Scanner sc)                                        |
+    |---------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                          |
+    |---------------------------------------------------------------------|
+    |  returns char - A valid character                                   |
+    |---------------------------------------------------------------------|
+    |  This method prompts and gets a valid character input from the user |
+    =====================================================================*/
     // automatic method to get a char
     public static char getChar(Scanner sc){
         String userInput;
@@ -420,7 +485,15 @@ public class BattleshipRunner{
         return charInput;
     }
 
-    // automatic method to get an integer
+    /*====================================================================
+    |  String getInt (Scanner sc)                                        |
+    |--------------------------------------------------------------------|
+    |  Scanner sc - The System.in scanner object                         |
+    |--------------------------------------------------------------------|
+    |  returns int - A valid int                                         |
+    |--------------------------------------------------------------------|
+    |  This method prompts and gets a valid integer input from the user  |
+    ====================================================================*/
     public static int getInt(Scanner sc){
         int intInput = -1;
         boolean validInt = false;
