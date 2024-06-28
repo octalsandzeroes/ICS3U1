@@ -139,10 +139,10 @@ public class BatextshipRunner{
                     }
 
                     // prints the result of the first turn randomization
-                    if (playerFirst == true){
-                        System.out.println("The player has the first move!");
+                    if (playerFirst == true && gameEnd == false){
+                        System.out.println("The player has the first move!\n");
                     } else {
-                        System.out.println("The CPU has the first move!");
+                        System.out.println("The CPU has the first move!\n");
                     }
 
                     break;
@@ -261,10 +261,11 @@ public class BatextshipRunner{
                     }
 
                     // prints that the player has the first move as the player save functionality saves on the player's turn
-                    if (validLoad == true){
+                    if (gameEnd == false){
                         playerFirst = true;
-                        System.out.println("The player has the first move!");
+                        System.out.println("The player has the first move!\n");
                     }
+
                     break;
                 // display the game rules
                 case 3:
@@ -302,7 +303,7 @@ public class BatextshipRunner{
                     quitGame = true;
                     break;
                 default:
-                    System.out.println("Invalid input, please retry.");
+                    System.out.print("Invalid input, please retry: ");
                     break;
             }        
 
@@ -336,6 +337,9 @@ public class BatextshipRunner{
                                 validCoord = false;
 
                                 validShot = Grids.updateShot(shotCoord, Player, CPU);
+                                if (validShot == false){
+                                    System.out.println("\nYou have already shot at this coordinate before, please retry.\n");
+                                }
                             }
                         } while (validShot == false);
 
@@ -421,6 +425,9 @@ public class BatextshipRunner{
                                 validCoord = false;
 
                                 validShot = Grids.updateShot(shotCoord, Player, CPU);
+                                if (validShot == false){
+                                    System.out.println("\nYou have already shot at this coordinate before, please retry.\n");
+                                }
                             }
                         } while (validShot == false);
 
@@ -443,8 +450,8 @@ public class BatextshipRunner{
                 }
             }
         
-            if (quitGame == true){
-                System.out.println("Game Ended.");
+            if (gameEnd == true){
+                System.out.println("Game Ended.\n");
                 Player.clearGrids();
                 CPU.clearGrids();
                 gameEnd = false;

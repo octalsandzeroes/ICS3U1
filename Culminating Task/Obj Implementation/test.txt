@@ -1,0 +1,44 @@
+Player ships:
+OOOOOOOOOO
+DDOOOOOOOO
+OOOOOOOOOO
+O--O-BBBB-
+OOOOOOOOOO
+--XOOOOOOO
+--SOOOOOOO
+--S-XAAAA-
+OOOOOOOXCC
+OOOOOOOOOO
+CPU ships:
+-----O----
+-----O----
+----------
+-----A----
+-----XXCCC
+-----AX---
+-----AS---
+-----A----
+-OX-------
+-OX--BXBB-
+Player shots:
+-----O----
+-----O----
+----------
+----------
+-----XX---
+------X---
+----------
+----------
+-OX-------
+-OX---X---
+CPU shots:
+-O--------
+----------
+----------
+O--O------
+-------O--
+--X------O
+----------
+----X-----
+-----O-X--
+------O---
